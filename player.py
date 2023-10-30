@@ -1,7 +1,7 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
 from pico2d import load_image
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s
 
 
 class Frame:
@@ -49,15 +49,59 @@ def left_down(e):
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_a
 
+def up_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
+
+
+def up_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_w
+
+
+def down_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_s
+
+
+def down_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_s
+
+
+
+class Up_Down:
+    @staticmethod
+    def enter(player, e):
+        player.frame = 0
+        if up_down(e) or down_up(e):
+            player.dir = 1
+        elif down_down(e) or up_up(e):
+            player.dir = -1
+
+    @staticmethod
+    def exit(player, e):
+        pass
+
+    @staticmethod
+    def do(player):
+        player.frame = (player.frame + 1) % 8
+        player.y += player.dir * 5
+
+    @staticmethod
+    def draw(player):
+        if player.face_dir > 0:
+            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
+        else:
+            player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h, 0, 'h', player.x, player.y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h)
+
 
 class Run:
     @staticmethod
     def enter(player, e):
         player.frame = 0
         if right_down(e) or left_up(e):
-            player.dir, player.action = 1, 1
+            player.dir, player.face_dir = 1, 1
         elif left_down(e) or right_up(e):
-            player.dir, player.action = -1, 0
+            player.dir, player.face_dir = -1, -1
 
     @staticmethod
     def exit(player, e):
@@ -71,10 +115,10 @@ class Run:
     @staticmethod
     def draw(player):
         if player.dir > 0:
-            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, 150,  move_lr[player.frame].w, move_lr[player.frame].h)
+            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
         else:
             player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
-                                   move_lr[player.frame].h, 0, 'h', player.x, 150, move_lr[player.frame].w,
+                                   move_lr[player.frame].h, 0, 'h', player.x, player.y, move_lr[player.frame].w,
                                    move_lr[player.frame].h)
 
 
@@ -82,10 +126,6 @@ class Run:
 class Idle:
     @staticmethod
     def enter(player, e):
-        if player.action == 0:
-            player.action = 2
-        elif player.action == 1:
-            player.action = 3
         player.dir = 0
         player.frame = 0
 
@@ -100,8 +140,12 @@ class Idle:
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(idle_state[player.frame].x, idle_state[player.frame].y, idle_state[player.frame].w, idle_state[player.frame].h, player.x, 150, idle_state[player.frame].w, idle_state[player.frame].h)
-        pass
+        if player.face_dir == 1:
+            player.image.clip_draw(idle_state[player.frame].x, idle_state[player.frame].y, idle_state[player.frame].w, idle_state[player.frame].h, player.x, player.y, idle_state[player.frame].w, idle_state[player.frame].h)
+        else:
+            player.image.clip_composite_draw(idle_state[player.frame].x, idle_state[player.frame].y, idle_state[player.frame].w,
+                                   idle_state[player.frame].h, 0, 'h', player.x, player.y, idle_state[player.frame].w,
+                                   idle_state[player.frame].h)
 
 
 class StateMachine:
@@ -109,8 +153,9 @@ class StateMachine:
         self.player = player
         self.cur_state = Idle
         self.table = {
-            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle}
+            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down, up_up: Up_Down, down_up: Up_Down},
+            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
+            Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle}
         }
 
     def start(self):
@@ -136,7 +181,8 @@ class Player:
     def __init__(self):
         self.x, self.y = 400, 90
         self.frame = 0
-        self.action = 3
+        self.dir = 0
+        self.face_dir = 1
         self.image = load_image('player.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
