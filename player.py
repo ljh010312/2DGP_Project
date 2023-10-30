@@ -1,44 +1,61 @@
-from pico2d import *
-
-open_canvas()
-
-court = load_image('Court_Japan.png')
-player = load_image('Player.png')
+from pico2d import load_image
 
 
-def handle_events():
-    global running, dir
+class Idle:
+    @staticmethod
+    def do():
+        print('드르렁... Zz.z.....')
+
+    @staticmethod
+    def enter():
+        print('고개 숙이기')
+
+    @staticmethod
+    def exit():
+        print('눈 뜨기')
+
+    @staticmethod
+    def draw():
+        print('인건')
 
 
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            running = False
-        elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_RIGHT:
-                dir += 1
-            elif event.key == SDLK_LEFT:
-                dir -= 1
-            elif event.key == SDLK_ESCAPE:
-                running = False
-        elif event.type == SDL_KEYUP:
-            if event.key == SDLK_RIGHT:
-                dir -= 1
-            elif event.key == SDLK_LEFT:
-                dir += 1
+class StateMachine:
+    def __init__(self):
+        self.cur_state = Idle
+        pass
+
+    def start(self):
+        self.cur_state.enter()
+        pass
+
+    def update(self):
+        self.cur_state.do()
+        pass
+
+    def draw(self):
+        self.cur_state.draw()
+        pass
+
+    pass
 
 
-running = True
-x = 800 // 2
-dir = 0
 
-while running:
-    clear_canvas()
-    court.clip_draw(0, 0, 431, 184, 400, 300, 800, 600)
-    player.clip_draw(24, 2027, 40, 75, x, 150, 50, 100)
-    update_canvas()
-    handle_events()
-    x += dir
+class Player:
+    def __init__(self):
+        self.x, self.y = 400, 90
+        self.frame = 0
+        self.dir = 0
+        self.action = 3
+        self.image = load_image('player.png')
+        self.state_machine = StateMachine()
+        self.state_machine.start()
 
-close_canvas()
+    def update(self):
+        self.state_machine.update()
 
+    def handle_event(self, event):
+        pass
+
+    def draw(self):
+        self.image.clip_draw(24, 2027, 40, 75, self.x, 150, 50, 100)
+        self.state_machine.draw()
