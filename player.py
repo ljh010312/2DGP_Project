@@ -71,9 +71,10 @@ class Up_Down:
     def enter(player, e):
         player.frame = 0
         if up_down(e) or down_up(e):
-            player.dir = 1
+            player.v_dir = 1
         elif down_down(e) or up_up(e):
-            player.dir = -1
+            player.v_dir = -1
+
 
     @staticmethod
     def exit(player, e):
@@ -82,7 +83,7 @@ class Up_Down:
     @staticmethod
     def do(player):
         player.frame = (player.frame + 1) % 8
-        player.y += player.dir * 5
+        player.y += player.v_dir * 5
 
     @staticmethod
     def draw(player):
@@ -99,9 +100,9 @@ class Run:
     def enter(player, e):
         player.frame = 0
         if right_down(e) or left_up(e):
-            player.dir, player.face_dir = 1, 1
+            player.h_dir, player.face_dir = 1, 1
         elif left_down(e) or right_up(e):
-            player.dir, player.face_dir = -1, -1
+            player.h_dir, player.face_dir = -1, -1
 
     @staticmethod
     def exit(player, e):
@@ -110,11 +111,11 @@ class Run:
     @staticmethod
     def do(player):
         player.frame = (player.frame + 1) % 8
-        player.x += player.dir * 5
+        player.x += player.h_dir * 5
 
     @staticmethod
     def draw(player):
-        if player.dir > 0:
+        if player.h_dir > 0:
             player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
         else:
             player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
@@ -122,11 +123,45 @@ class Run:
                                    move_lr[player.frame].h)
 
 
+class Dia_Run:
+    @staticmethod
+    def enter(player, e):
+        player.frame = 0
+        if right_down(e) or left_up(e):
+            player.h_dir, player.face_dir = 1, 1
+        elif left_down(e) or right_up(e):
+            player.h_dir, player.face_dir = -1, -1
+
+        if up_down(e) or down_up(e):
+            player.v_dir = 1
+        elif down_down(e) or up_up(e):
+            player.v_dir = -1
+
+
+    @staticmethod
+    def exit(player, e):
+        pass
+
+    @staticmethod
+    def do(player):
+        player.frame = (player.frame + 1) % 8
+        player.x += player.h_dir * 5
+        player.y += player.v_dir * 5
+
+    @staticmethod
+    def draw(player):
+        if player.h_dir > 0:
+            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
+        else:
+            player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h, 0, 'h', player.x, player.y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h)
+
 
 class Idle:
     @staticmethod
     def enter(player, e):
-        player.dir = 0
+        player.h_dir = 0
         player.frame = 0
 
     @staticmethod
@@ -154,8 +189,9 @@ class StateMachine:
         self.cur_state = Idle
         self.table = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down, up_up: Up_Down, down_up: Up_Down},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
-            Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle}
+            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Dia_Run, down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run},
+            Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle, right_down: Dia_Run, left_down: Dia_Run, right_up: Dia_Run, left_up: Dia_Run},
+            Dia_Run: {up_up: Run, down_up: Run, right_up: Up_Down, left_up: Up_Down, right_down: Up_Down, left_down: Up_Down, up_down: Run, down_down: Run}
         }
 
     def start(self):
@@ -181,7 +217,8 @@ class Player:
     def __init__(self):
         self.x, self.y = 400, 90
         self.frame = 0
-        self.dir = 0
+        self.h_dir = 0
+        self.v_dir = 0
         self.face_dir = 1
         self.image = load_image('player.png')
         self.state_machine = StateMachine(self)
