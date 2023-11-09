@@ -88,7 +88,9 @@ class Up_Down:
     @staticmethod
     def draw(player):
         if player.face_dir > 0:
-            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
+            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w,
+                                   move_lr[player.frame].h)
         else:
             player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
                                    move_lr[player.frame].h, 0, 'h', player.x, player.y, move_lr[player.frame].w,
@@ -116,7 +118,9 @@ class Run:
     @staticmethod
     def draw(player):
         if player.h_dir > 0:
-            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
+            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w,
+                                   move_lr[player.frame].h)
         else:
             player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
                                    move_lr[player.frame].h, 0, 'h', player.x, player.y, move_lr[player.frame].w,
@@ -151,7 +155,9 @@ class Dia_Run:
     @staticmethod
     def draw(player):
         if player.h_dir > 0:
-            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w, move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w, move_lr[player.frame].h)
+            player.image.clip_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
+                                   move_lr[player.frame].h, player.x, player.y,  move_lr[player.frame].w,
+                                   move_lr[player.frame].h)
         else:
             player.image.clip_composite_draw(move_lr[player.frame].x, move_lr[player.frame].y, move_lr[player.frame].w,
                                    move_lr[player.frame].h, 0, 'h', player.x, player.y, move_lr[player.frame].w,
@@ -176,7 +182,9 @@ class Idle:
     @staticmethod
     def draw(player):
         if player.face_dir == 1:
-            player.image.clip_draw(idle_state[player.frame].x, idle_state[player.frame].y, idle_state[player.frame].w, idle_state[player.frame].h, player.x, player.y, idle_state[player.frame].w, idle_state[player.frame].h)
+            player.image.clip_draw(idle_state[player.frame].x, idle_state[player.frame].y, idle_state[player.frame].w,
+                                   idle_state[player.frame].h, player.x, player.y, idle_state[player.frame].w,
+                                   idle_state[player.frame].h)
         else:
             player.image.clip_composite_draw(idle_state[player.frame].x, idle_state[player.frame].y, idle_state[player.frame].w,
                                    idle_state[player.frame].h, 0, 'h', player.x, player.y, idle_state[player.frame].w,
