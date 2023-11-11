@@ -1,6 +1,6 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s
 
 import game_framework
@@ -258,3 +258,13 @@ class Keiko:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
+
+
+    def get_bb(self):
+        return self.x - 15, self.y - 40, self.x + 15, self.y + 40
+
+    def handle_collision(self, group, other):
+        if group == 'keiko:ball':
+            pass
+        pass

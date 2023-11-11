@@ -33,13 +33,16 @@ def init():
 
     keiko = Keiko()
     game_world.add_object(keiko, 1)
+    game_world.add_collision_pair('keiko:ball', keiko, None)
 
     ball = Ball(400, 300, 0)
     game_world.add_object(ball, 1)
+    game_world.add_collision_pair('keiko:ball', None, ball)
 
 
 def update():
     game_world.update()
+    game_world.handle_collisions()
 
 
 def draw():
