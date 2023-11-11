@@ -3,6 +3,7 @@ from pico2d import *
 import game_framework
 from keiko import Keiko
 from court import Court
+from ball import Ball
 import game_world
 
 def handle_events():
@@ -23,7 +24,7 @@ def init():
     global court
     global keiko
     global world
-
+    global ball
     running = True
     world = []
 
@@ -32,6 +33,9 @@ def init():
 
     keiko = Keiko()
     game_world.add_object(keiko, 1)
+
+    ball = Ball(400, 300, 0)
+    game_world.add_object(ball, 1)
 
 
 def update():
