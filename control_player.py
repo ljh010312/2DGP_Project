@@ -1,7 +1,7 @@
 from pico2d import *
 from player import Player
 from court import Court
-
+import game_world
 
 def handle_events():
     global running
@@ -26,22 +26,19 @@ def reset_world():
     world = []
 
     court = Court()
-    world.append(court)
+    game_world.add_object(court, 0)
 
     player = Player()
-    world.append(player)
-
+    game_world.add_object(player, 1)
 
 
 def update_world():
-    for o in world:
-        o.update()
+    game_world.update()
 
 
 def render_world():
     clear_canvas()
-    for o in world:
-        o.draw()
+    game_world.render()
     update_canvas()
 
 
