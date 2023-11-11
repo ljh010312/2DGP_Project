@@ -1,7 +1,8 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import load_image, draw_rectangle
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s
+from pico2d import load_image, draw_rectangle, clamp
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s, SDL_MOUSEBUTTONDOWN, \
+    SDL_BUTTON_LEFT, SDL_MOUSEBUTTONUP
 
 import game_framework
 import game_world
@@ -79,6 +80,13 @@ def down_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_s
 
 
+def left_mouse_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_MOUSEBUTTONDOWN and e[1].button == SDL_BUTTON_LEFT
+
+
+def left_mouse_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_MOUSEBUTTONUP and e[1].button == SDL_BUTTON_LEFT
+
 
 class Up_Down:
     @staticmethod
@@ -98,6 +106,8 @@ class Up_Down:
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
+        keiko.y = clamp(105, keiko.y, 330)
+
 
 
     @staticmethod
@@ -110,7 +120,6 @@ class Up_Down:
             keiko.image.clip_composite_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                    move_lr[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y, move_lr[int(keiko.frame)].w,
                                    move_lr[int(keiko.frame)].h)
-
 
 
 class Run:
@@ -131,6 +140,8 @@ class Run:
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
 
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
+        keiko.x = clamp(90, keiko.x, 375)
+
 
     @staticmethod
     def draw(keiko):
@@ -170,6 +181,10 @@ class Dia_Run:
 
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
+
+        keiko.x = clamp(90, keiko.x, 375)
+        keiko.y = clamp(105, keiko.y, 330)
+
 
     @staticmethod
     def draw(keiko):
@@ -277,4 +292,3 @@ class Keiko:
             self.ball = Ball(self.x + self.h_dir * 15, self.y, 0)
             self.hold_ball = True
             game_world.add_object(self.ball)
-        pass
