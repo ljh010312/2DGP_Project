@@ -3,6 +3,8 @@
 from pico2d import load_image
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s
 
+import game_framework
+
 
 class Frame:
     def __init__(self, x, y, w, h):
@@ -32,6 +34,16 @@ move_lr = (
     Frame(190, 2027, 42, 76),
     Frame(190, 2027, 42, 76)
 )
+
+PIXEL_PER_METER = (10.0 / 0.3) # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0 # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
 
 
 def right_down(e):
@@ -82,20 +94,20 @@ class Up_Down:
 
     @staticmethod
     def do(keiko):
-        keiko.frame = (keiko.frame + 1) % 8
-        keiko.y += keiko.v_dir * 5
+        keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
 
 
     @staticmethod
     def draw(keiko):
         if keiko.face_dir > 0:
-            keiko.image.clip_draw(move_lr[keiko.frame].x, move_lr[keiko.frame].y, move_lr[keiko.frame].w,
-                                   move_lr[keiko.frame].h, keiko.x, keiko.y,  move_lr[keiko.frame].w,
-                                   move_lr[keiko.frame].h)
+            keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
+                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,  move_lr[int(keiko.frame)].w,
+                                   move_lr[int(keiko.frame)].h)
         else:
-            keiko.image.clip_composite_draw(move_lr[keiko.frame].x, move_lr[keiko.frame].y, move_lr[keiko.frame].w,
-                                   move_lr[keiko.frame].h, 0, 'h', keiko.x, keiko.y, move_lr[keiko.frame].w,
-                                   move_lr[keiko.frame].h)
+            keiko.image.clip_composite_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
+                                   move_lr[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y, move_lr[int(keiko.frame)].w,
+                                   move_lr[int(keiko.frame)].h)
 
 
 
@@ -114,19 +126,20 @@ class Run:
 
     @staticmethod
     def do(keiko):
-        keiko.frame = (keiko.frame + 1) % 8
-        keiko.x += keiko.h_dir * 5
+        keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+
+        keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
 
     @staticmethod
     def draw(keiko):
         if keiko.h_dir > 0:
-            keiko.image.clip_draw(move_lr[keiko.frame].x, move_lr[keiko.frame].y, move_lr[keiko.frame].w,
-                                  move_lr[keiko.frame].h, keiko.x, keiko.y, move_lr[keiko.frame].w,
-                                  move_lr[keiko.frame].h)
+            keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
+                                  move_lr[int(keiko.frame)].h, keiko.x, keiko.y, move_lr[int(keiko.frame)].w,
+                                  move_lr[int(keiko.frame)].h)
         else:
-            keiko.image.clip_composite_draw(move_lr[keiko.frame].x, move_lr[keiko.frame].y, move_lr[keiko.frame].w,
-                                            move_lr[keiko.frame].h, 0, 'h', keiko.x, keiko.y, move_lr[keiko.frame].w,
-                                            move_lr[keiko.frame].h)
+            keiko.image.clip_composite_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
+                                            move_lr[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y, move_lr[int(keiko.frame)].w,
+                                            move_lr[int(keiko.frame)].h)
 
 
 class Dia_Run:
@@ -150,20 +163,22 @@ class Dia_Run:
 
     @staticmethod
     def do(keiko):
-        keiko.frame = (keiko.frame + 1) % 8
-        keiko.x += keiko.h_dir * 5
-        keiko.y += keiko.v_dir * 5
+
+        keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+
+        keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
+        keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
 
     @staticmethod
     def draw(keiko):
         if keiko.h_dir > 0:
-            keiko.image.clip_draw(move_lr[keiko.frame].x, move_lr[keiko.frame].y, move_lr[keiko.frame].w,
-                                  move_lr[keiko.frame].h, keiko.x, keiko.y, move_lr[keiko.frame].w,
-                                  move_lr[keiko.frame].h)
+            keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
+                                  move_lr[int(keiko.frame)].h, keiko.x, keiko.y, move_lr[int(keiko.frame)].w,
+                                  move_lr[int(keiko.frame)].h)
         else:
-            keiko.image.clip_composite_draw(move_lr[keiko.frame].x, move_lr[keiko.frame].y, move_lr[keiko.frame].w,
-                                            move_lr[keiko.frame].h, 0, 'h', keiko.x, keiko.y, move_lr[keiko.frame].w,
-                                            move_lr[keiko.frame].h)
+            keiko.image.clip_composite_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
+                                            move_lr[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y, move_lr[int(keiko.frame)].w,
+                                            move_lr[int(keiko.frame)].h)
 
 
 class Idle:
@@ -178,19 +193,19 @@ class Idle:
 
     @staticmethod
     def do(keiko):
-        keiko.frame = (keiko.frame + 1) % 8
+        keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         pass
 
     @staticmethod
     def draw(keiko):
         if keiko.face_dir == 1:
-            keiko.image.clip_draw(idle_state[keiko.frame].x, idle_state[keiko.frame].y, idle_state[keiko.frame].w,
-                                  idle_state[keiko.frame].h, keiko.x, keiko.y, idle_state[keiko.frame].w,
-                                  idle_state[keiko.frame].h)
+            keiko.image.clip_draw(idle_state[int(keiko.frame)].x, idle_state[int(keiko.frame)].y, idle_state[int(keiko.frame)].w,
+                                  idle_state[int(keiko.frame)].h, keiko.x, keiko.y, idle_state[int(keiko.frame)].w,
+                                  idle_state[int(keiko.frame)].h)
         else:
-            keiko.image.clip_composite_draw(idle_state[keiko.frame].x, idle_state[keiko.frame].y, idle_state[keiko.frame].w,
-                                            idle_state[keiko.frame].h, 0, 'h', keiko.x, keiko.y, idle_state[keiko.frame].w,
-                                            idle_state[keiko.frame].h)
+            keiko.image.clip_composite_draw(idle_state[int(keiko.frame)].x, idle_state[int(keiko.frame)].y, idle_state[int(keiko.frame)].w,
+                                            idle_state[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y, idle_state[int(keiko.frame)].w,
+                                            idle_state[int(keiko.frame)].h)
 
 
 class StateMachine:
