@@ -4,6 +4,8 @@ from pico2d import load_image, draw_rectangle
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s
 
 import game_framework
+import game_world
+from ball import Ball
 
 
 class Frame:
@@ -248,9 +250,15 @@ class Keiko:
         self.image = load_image('keiko.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
+        self.hold_ball = False
+        self.ball = None
 
     def update(self):
         self.state_machine.update()
+        if self.hold_ball:
+            self.ball.x = self.x + self.face_dir * 15
+            self.ball.y = self.y
+
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -266,5 +274,7 @@ class Keiko:
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
-            pass
+            self.ball = Ball(self.x + self.h_dir * 15, self.y, 0)
+            self.hold_ball = True
+            game_world.add_object(self.ball)
         pass
