@@ -32,5 +32,5 @@ class Ball:
         return self.x - 10, self.y - 10, self.x + 10, self.y + 10
 
     def handle_collision(self, group, other):
-        if group == 'keiko:ball':
+        if group == 'keiko:ball' and not other.hold_ball:
             game_world.remove_object(self)

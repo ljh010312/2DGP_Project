@@ -1,3 +1,5 @@
+import random
+
 from pico2d import *
 
 import game_framework
@@ -38,6 +40,12 @@ def init():
     ball = Ball(400, 300, 400, 300, 0)
     game_world.add_object(ball, 1)
     game_world.add_collision_pair('keiko:ball', None, ball)
+
+    balls = [Ball(300, random.randint(100,300), 0, 0, 0) for _ in range(10)]
+    game_world.add_objects(balls, 1)
+    for b in balls:
+        game_world.add_collision_pair('keiko:ball', None, b)
+
 
 
 def update():

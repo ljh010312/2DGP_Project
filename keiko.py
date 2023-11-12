@@ -110,12 +110,13 @@ class Charging:
     @staticmethod
     def enter(keiko, e):
         keiko.frame = 0
-        keiko.power = 0
         keiko.charging_start_time = get_time()
+        keiko.charging = True
 
     @staticmethod
     def exit(keiko, e):
-        pass
+        keiko.charging = False
+
     @staticmethod
     def do(keiko):
         keiko.power = get_time() - keiko.charging_start_time
@@ -130,19 +131,16 @@ class Charging:
 class Throw_Ball:
     @staticmethod
     def enter(keiko, e):
-        keiko.Throwing = True
         keiko.frame = 0
         keiko.hold_ball = False
         keiko.wait_time = get_time()
         game_world.remove_object(keiko.ball)
-        ball = Ball(keiko.x, keiko.y, e[1].x, e[1].y, keiko.power * 5)
+        ball = Ball(keiko.x, keiko.y, e[1].x, 600  - 1 - e[1].y, keiko.power * 5)
         game_world.add_object(ball)
 
     @staticmethod
     def exit(keiko, e):
-        keiko.Throwing = False
         keiko.power = 0
-
 
     @staticmethod
     def do(keiko):
@@ -311,7 +309,8 @@ class StateMachine:
                       left_down: Dia_Run, right_up: Dia_Run, left_up: Dia_Run},
             Dia_Run: {up_up: Run, down_up: Run, right_up: Up_Down, left_up: Up_Down, right_down: Up_Down,
                       left_down: Up_Down, up_down: Run, down_down: Run},
-            Throw_Ball: {time_out: Idle},
+            Throw_Ball: {time_out: Idle, right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
+                   up_up: Up_Down, down_up: Up_Down},
             Charging: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
                    up_up: Up_Down, down_up: Up_Down, left_mouse_up: Throw_Ball}
         }
@@ -348,13 +347,11 @@ class Keiko:
         self.hold_ball = False
         self.charging = False
         self.ball = None
-
         self.power = 0
 
 
     def update(self):
         self.state_machine.update()
-
         if self.charging:
             self.ball.x = self.x - 20
             self.ball.y = self.y + 25
@@ -379,6 +376,7 @@ class Keiko:
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
-            self.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
-            self.hold_ball = True
-            game_world.add_object(self.ball)
+            if not self.hold_ball:
+                self.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
+                self.hold_ball = True
+                game_world.add_object(self.ball)
