@@ -35,7 +35,7 @@ def init():
     game_world.add_object(keiko, 1)
     game_world.add_collision_pair('keiko:ball', keiko, None)
 
-    ball = Ball(400, 300, 0)
+    ball = Ball(400, 300, 400, 300, 0)
     game_world.add_object(ball, 1)
     game_world.add_collision_pair('keiko:ball', None, ball)
 

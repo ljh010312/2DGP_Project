@@ -113,16 +113,17 @@ class Throw_Ball:
         keiko.hold_ball = False
         keiko.charging = False
         keiko.wait_time = get_time()
+        keiko.target_x = e[1].x
+        keiko.target_y = e[1].y
 
     @staticmethod
     def exit(keiko, e):
-        keiko.power = 0
         game_world.remove_object(keiko.ball)
 
-        
-
-        ball = Ball(keiko.x, keiko.y, keiko.face_dir * 10)
+        ball = Ball(keiko.x, keiko.y, keiko.target_x, keiko.target_y, keiko.power * 5)
         game_world.add_object(ball)
+        keiko.power = 0
+
 
     @staticmethod
     def do(keiko):
@@ -362,8 +363,10 @@ class Keiko:
             self.ball.y = self.y
 
     def handle_event(self, event):
+
         if event.type == SDL_MOUSEBUTTONUP and event.button == SDL_BUTTON_LEFT:
             if self.hold_ball:
+
                 self.state_machine.handle_event(('INPUT', event))
         else:
             self.state_machine.handle_event(('INPUT', event))
@@ -378,6 +381,6 @@ class Keiko:
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
-            self.ball = Ball(self.x + self.h_dir * 15, self.y, 0)
+            self.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
             self.hold_ball = True
             game_world.add_object(self.ball)
