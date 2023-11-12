@@ -8,6 +8,7 @@ from court import Court
 from ball import Ball
 import game_world
 from power_up_item import Power_Up_Item
+from shrink_potion import Shrink_Potion
 
 
 def handle_events():
@@ -39,6 +40,7 @@ def init():
     game_world.add_object(keiko, 1)
     game_world.add_collision_pair('keiko:ball', keiko, None)
     game_world.add_collision_pair('keiko:power_up_item', keiko, None)
+    game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
 
     ball = Ball(400, 300, 400, 300, 0)
     game_world.add_object(ball, 1)
@@ -53,7 +55,9 @@ def init():
     game_world.add_object(power_up_item, 1)
     game_world.add_collision_pair('keiko:power_up_item', None, power_up_item)
 
-
+    shrink_potion = Shrink_Potion(200, 200)
+    game_world.add_object(shrink_potion, 1)
+    game_world.add_collision_pair('keiko:shrink_potion', None, shrink_potion)
 
 def update():
     game_world.update()

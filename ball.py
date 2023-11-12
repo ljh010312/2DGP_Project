@@ -20,8 +20,8 @@ class Ball:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.x += self.power * math.cos(self.direction) * 100 * game_framework.frame_time
-        self.y += self.power * math.sin(self.direction) * 100 * game_framework.frame_time
+        self.x += self.power * 40 * math.cos(self.direction) * game_framework.frame_time
+        self.y += self.power * 40 * math.sin(self.direction) * game_framework.frame_time
 
         self.power -= self.decay_rate
         self.power = clamp(0, self.power, 30)
