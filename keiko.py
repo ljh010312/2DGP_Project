@@ -106,22 +106,41 @@ def left_mouse_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_MOUSEBUTTONUP and e[1].button == SDL_BUTTON_LEFT
 
 
-class Throw_Ball:
+class Charging:
     @staticmethod
     def enter(keiko, e):
         keiko.frame = 0
-        keiko.hold_ball = False
-        keiko.charging = False
-        keiko.wait_time = get_time()
-        keiko.target_x = e[1].x
-        keiko.target_y = e[1].y
+        keiko.power = 0
+        keiko.charging_start_time = get_time()
 
     @staticmethod
     def exit(keiko, e):
-        game_world.remove_object(keiko.ball)
+        pass
+    @staticmethod
+    def do(keiko):
+        keiko.power = get_time() - keiko.charging_start_time
 
-        ball = Ball(keiko.x, keiko.y, keiko.target_x, keiko.target_y, keiko.power * 5)
+    @staticmethod
+    def draw(keiko):
+        keiko.image.clip_draw(throw_motion[0].x, throw_motion[0].y,
+                              throw_motion[0].w,
+                              throw_motion[0].h, keiko.x, keiko.y, throw_motion[0].w,
+                              throw_motion[0].h)
+
+class Throw_Ball:
+    @staticmethod
+    def enter(keiko, e):
+        keiko.Throwing = True
+        keiko.frame = 0
+        keiko.hold_ball = False
+        keiko.wait_time = get_time()
+        game_world.remove_object(keiko.ball)
+        ball = Ball(keiko.x, keiko.y, e[1].x, e[1].y, keiko.power * 5)
         game_world.add_object(ball)
+
+    @staticmethod
+    def exit(keiko, e):
+        keiko.Throwing = False
         keiko.power = 0
 
 
@@ -146,10 +165,6 @@ class Up_Down:
             keiko.v_dir = 1
         elif down_down(e) or up_up(e):
             keiko.v_dir = -1
-
-        if left_mouse_down(e) and keiko.hold_ball:
-            keiko.charging = True
-            keiko.charging_start_time = get_time()
     @staticmethod
     def exit(keiko, e):
         pass
@@ -160,9 +175,7 @@ class Up_Down:
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
         keiko.y = clamp(105, keiko.y, 330)
 
-        if keiko.charging:
-            keiko.power = get_time() - keiko.charging_start_time
-            keiko.power = clamp(1, keiko.power, 10)
+
 
     @staticmethod
     def draw(keiko):
@@ -187,9 +200,6 @@ class Run:
         elif left_down(e) or right_up(e):
             keiko.h_dir, keiko.face_dir = -1, -1
 
-        if left_mouse_down(e) and keiko.hold_ball:
-            keiko.charging = True
-            keiko.charging_start_time = get_time()
     @staticmethod
     def exit(keiko, e):
         pass
@@ -200,10 +210,6 @@ class Run:
 
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
         keiko.x = clamp(90, keiko.x, 375)
-
-        if keiko.charging:
-            keiko.power = get_time() - keiko.charging_start_time
-            keiko.power = clamp(1, keiko.power, 10)
 
     @staticmethod
     def draw(keiko):
@@ -233,9 +239,6 @@ class Dia_Run:
         elif down_down(e) or up_up(e):
             keiko.v_dir = -1
 
-        if left_mouse_down(e) and keiko.hold_ball:
-            keiko.charging = True
-            keiko.charging_start_time = get_time()
     @staticmethod
     def exit(keiko, e):
         pass
@@ -250,10 +253,6 @@ class Dia_Run:
 
         keiko.x = clamp(90, keiko.x, 375)
         keiko.y = clamp(105, keiko.y, 330)
-
-        if keiko.charging:
-            keiko.power = get_time() - keiko.charging_start_time
-            keiko.power = clamp(1, keiko.power, 10)
 
     @staticmethod
     def draw(keiko):
@@ -274,9 +273,6 @@ class Idle:
     def enter(keiko, e):
         keiko.h_dir = 0
         keiko.frame = 0
-        if left_mouse_down(e) and keiko.hold_ball:
-            keiko.charging = True
-            keiko.charging_start_time = get_time()
 
 
     @staticmethod
@@ -286,9 +282,6 @@ class Idle:
     @staticmethod
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        if keiko.charging:
-            keiko.power = get_time() - keiko.charging_start_time
-            keiko.power = clamp(1, keiko.power, 10)
 
     @staticmethod
     def draw(keiko):
@@ -311,14 +304,16 @@ class StateMachine:
         self.cur_state = Idle
         self.table = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
-                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Idle, left_mouse_up: Throw_Ball},
+                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Dia_Run,
-                  down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run, left_mouse_down: Run, left_mouse_up: Throw_Ball},
+                  down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run},
             Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle, right_down: Dia_Run,
-                      left_down: Dia_Run, right_up: Dia_Run, left_up: Dia_Run, left_mouse_down: Up_Down, left_mouse_up: Throw_Ball},
+                      left_down: Dia_Run, right_up: Dia_Run, left_up: Dia_Run},
             Dia_Run: {up_up: Run, down_up: Run, right_up: Up_Down, left_up: Up_Down, right_down: Up_Down,
-                      left_down: Up_Down, up_down: Run, down_down: Run, left_mouse_down: Dia_Run, left_mouse_up: Throw_Ball},
-            Throw_Ball: {time_out: Idle}
+                      left_down: Up_Down, up_down: Run, down_down: Run},
+            Throw_Ball: {time_out: Idle},
+            Charging: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
+                   up_up: Up_Down, down_up: Up_Down, left_mouse_up: Throw_Ball}
         }
 
     def start(self):
@@ -351,22 +346,25 @@ class Keiko:
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.hold_ball = False
-        self.ball = None
-        self.power = 0
         self.charging = False
-        self.charging_start_time = None
+        self.ball = None
+
+        self.power = 0
+
 
     def update(self):
         self.state_machine.update()
-        if self.hold_ball:
+
+        if self.charging:
+            self.ball.x = self.x - 20
+            self.ball.y = self.y + 25
+        elif self.hold_ball:
             self.ball.x = self.x + self.face_dir * 15
             self.ball.y = self.y
 
     def handle_event(self, event):
-
-        if event.type == SDL_MOUSEBUTTONUP and event.button == SDL_BUTTON_LEFT:
+        if event.button == SDL_BUTTON_LEFT:
             if self.hold_ball:
-
                 self.state_machine.handle_event(('INPUT', event))
         else:
             self.state_machine.handle_event(('INPUT', event))
