@@ -110,7 +110,6 @@ class Charging:
     @staticmethod
     def enter(keiko, e):
         keiko.frame = 0
-        keiko.charging_start_time = get_time()
         keiko.charging = True
 
     @staticmethod
@@ -119,7 +118,8 @@ class Charging:
 
     @staticmethod
     def do(keiko):
-        keiko.power = get_time() - keiko.charging_start_time
+        keiko.power += 0.01
+        keiko.power = clamp(1, keiko.power, 10)
 
     @staticmethod
     def draw(keiko):
@@ -381,3 +381,6 @@ class Keiko:
                 self.hold_ball = True
                 game_world.add_object(self.ball)
                 game_world.remove_object(other)
+        elif group == 'keiko:power_up_item':
+            self.power = 10
+            print('충돌!!!')
