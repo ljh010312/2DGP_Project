@@ -3,6 +3,7 @@ import random
 from pico2d import *
 
 import game_framework
+from big_ball_potion import Big_Ball_Potion
 from keiko import Keiko
 from court import Court
 from ball import Ball
@@ -41,6 +42,7 @@ def init():
     game_world.add_collision_pair('keiko:ball', keiko, None)
     game_world.add_collision_pair('keiko:power_up_item', keiko, None)
     game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
+    game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
 
     ball = Ball(400, 300, 400, 300, 0)
     game_world.add_object(ball, 1)
@@ -58,6 +60,10 @@ def init():
     shrink_potion = Shrink_Potion(200, 200)
     game_world.add_object(shrink_potion, 1)
     game_world.add_collision_pair('keiko:shrink_potion', None, shrink_potion)
+
+    big_ball_potion = Big_Ball_Potion(100, 200)
+    game_world.add_object(big_ball_potion, 1)
+    game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
 def update():
     game_world.update()
