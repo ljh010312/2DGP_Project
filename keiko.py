@@ -380,3 +380,4 @@ class Keiko:
                 self.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
                 self.hold_ball = True
                 game_world.add_object(self.ball)
+                game_world.remove_object(other)
