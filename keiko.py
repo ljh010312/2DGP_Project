@@ -348,7 +348,7 @@ class StateMachine:
 
 class Keiko:
     def __init__(self):
-        self.x, self.y = 400, 90
+        self.x, self.y = 100, 100
         self.frame = 0
         self.h_dir = 0
         self.v_dir = 0

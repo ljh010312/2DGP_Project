@@ -38,7 +38,7 @@ def init():
     game_world.add_object(court, 0)
 
     keiko = Keiko()
-    game_world.add_object(keiko, 1)
+    game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
     game_world.add_collision_pair('keiko:power_up_item', keiko, None)
     game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
