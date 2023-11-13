@@ -137,10 +137,10 @@ class Throw_Ball:
         game_world.remove_object(keiko.ball)
 
         if keiko.item == 'ball':
-            ball = Ball(keiko.x, keiko.y, e[1].x, 600 - 1 - e[1].y, keiko.power * 5)
+            ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 600 - 1 - e[1].y, keiko.power * 5)
             game_world.add_object(ball)
         elif keiko.item == 'big_ball':
-            big_ball = Big_Ball(keiko.x, keiko.y, e[1].x, 600 - 1 - e[1].y, keiko.power * 5)
+            big_ball = Big_Ball(keiko.x-20, keiko.y+25, e[1].x, 600 - 1 - e[1].y, keiko.power * 5)
             game_world.add_object(big_ball)
             keiko.item = 'ball'
 
@@ -400,8 +400,11 @@ class Keiko:
                 game_world.remove_object(other)
         elif group == 'keiko:power_up_item':
             self.power = 10
+            game_world.remove_object(other)
         elif group == 'keiko:shrink_potion':
             self.shrink = 2
             self.shrink_start_time = get_time()
+            game_world.remove_object(other)
         elif group == 'keiko:big_ball_potion':
             self.item = 'big_ball'
+            game_world.remove_object(other)
