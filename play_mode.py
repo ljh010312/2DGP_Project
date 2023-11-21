@@ -7,6 +7,7 @@ from big_ball_potion import Big_Ball_Potion
 from keiko import Keiko
 from court import Court
 from ball import Ball
+from miyuki import Miyuki
 import game_world
 from power_up_item import Power_Up_Item
 from shrink_potion import Shrink_Potion
@@ -64,6 +65,10 @@ def init():
     big_ball_potion = Big_Ball_Potion(100, 200)
     game_world.add_object(big_ball_potion, 1)
     game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
+
+    miyuki = Miyuki()
+    game_world.add_object(miyuki, 2)
+
 
 def update():
     game_world.update()

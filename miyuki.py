@@ -19,6 +19,48 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
 
+class Frame:
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+
+
+idle_state = (
+    Frame(18, 2310, 36, 82),
+    Frame(18, 2310, 36, 82),
+    Frame(18, 2310, 36, 82),
+    Frame(18, 2310, 36, 82),
+    Frame(63, 2310, 38, 79),
+    Frame(63, 2310, 38, 79),
+    Frame(63, 2310, 38, 79),
+    Frame(63, 2310, 38, 79),
+)
+
+move_lr = (
+    Frame(18,2178,36,81),
+    Frame(18,2178,36,81),
+    Frame(60,2178,41,80),
+    Frame(60,2178,41,80),
+    Frame(107,2178,36,81),
+    Frame(107,2178,36,81),
+    Frame(149,2178,41,80),
+    Frame(149,2178,41,80),
+)
+
+
+throw_motion = (
+    Frame(219, 2418, 54, 77),
+    Frame(219, 2418, 54, 77),
+    Frame(284, 2418, 48, 82),
+    Frame(284, 2418, 48, 82),
+    Frame(342, 2418, 56, 75),
+    Frame(342, 2418, 56, 75),
+    Frame(409, 2418, 53, 74),
+    Frame(409, 2418, 53, 74),
+)
+
 class Miyuki:
     image = None
 
@@ -35,13 +77,18 @@ class Miyuki:
         self.state = 'Idle'
 
     def get_bb(self):
-        return self.x - 20, self.y - 40, self.x + 20, self.y + 50
+        return self.x - 15, self.y - 40, self.x + 15, self.y + 40
 
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
 
 
     def draw(self):
+        self.image.clip_draw(idle_state[int(self.frame)].x, idle_state[int(self.frame)].y,
+                              idle_state[int(self.frame)].w,
+                              idle_state[int(self.frame)].h, self.x, self.y, idle_state[int(self.frame)].w,
+                              idle_state[int(self.frame)].h)
+
         draw_rectangle(*self.get_bb())
 
     def handle_event(self, event):
