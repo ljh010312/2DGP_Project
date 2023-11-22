@@ -73,21 +73,30 @@ class Miyuki:
         self.y = y if y else random.randint(105, 330)
         self.load_image()
         self.dir = 0.0
+        self.speed = 0.0
+        self.tx, self.ty = 400, 150
         self.frame = 0
         self.state = 'Idle'
+        self.build_behavior_tree()
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
 
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
-
+        self.bt.run()
 
     def draw(self):
-        self.image.clip_draw(idle_state[int(self.frame)].x, idle_state[int(self.frame)].y,
-                              idle_state[int(self.frame)].w,
-                              idle_state[int(self.frame)].h, self.x, self.y, idle_state[int(self.frame)].w,
-                              idle_state[int(self.frame)].h)
+        if math.cos(self.dir) < 0:
+            self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
+                              move_lr[int(self.frame)].w,
+                              move_lr[int(self.frame)].h, 0, 'h', self.x, self.y, move_lr[int(self.frame)].w,
+                              move_lr[int(self.frame)].h)
+        else:
+            self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
+                                           move_lr[int(self.frame)].w,
+                                           move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
+                                           move_lr[int(self.frame)].h)
 
         draw_rectangle(*self.get_bb())
 
@@ -97,4 +106,39 @@ class Miyuki:
     def handle_collision(self, group, other):
         pass
 
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
 
+
+    def build_behavior_tree(self):
+        pass
+
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
+
+    def move_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+
+    def move_to(self, r = 0.5):
+        self.state = 'Walk'
+        self.move_slightly_to(self.tx, self.ty)
+        if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+
+    def set_random_location(self):
+        self.tx, self.ty = random.randint(390, 690), random.randint(70, 300)
+        return BehaviorTree.SUCCESS
+
+    def build_behavior_tree(self):
+        a1 = Action('Set random location', self.set_random_location)
+        a2 = Action('Move to', self.move_to)
+        root = SEQ_wander = Sequence('Wander', a1, a2)
+
+        self.bt = BehaviorTree(root)
