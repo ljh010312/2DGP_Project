@@ -137,10 +137,10 @@ class Throw_Ball:
         game_world.remove_object(keiko.ball)
 
         if keiko.item == 'ball':
-            ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 600 - 1 - e[1].y, keiko.power * 5)
+            ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
             game_world.add_object(ball)
         elif keiko.item == 'big_ball':
-            big_ball = Big_Ball(keiko.x-20, keiko.y+25, e[1].x, 600 - 1 - e[1].y, keiko.power * 5)
+            big_ball = Big_Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
             game_world.add_object(big_ball)
             keiko.item = 'ball'
 
@@ -180,7 +180,7 @@ class Up_Down:
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
-        keiko.y = clamp(105, keiko.y, 330)
+        keiko.y = clamp(125, keiko.y, 435)
 
     @staticmethod
     def draw(keiko):
@@ -215,7 +215,9 @@ class Run:
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
 
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
-        keiko.x = clamp(90, keiko.x, 375)
+
+        keiko.x = clamp(110, keiko.x, 480)
+
 
     @staticmethod
     def draw(keiko):
@@ -258,8 +260,8 @@ class Dia_Run:
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
 
-        keiko.x = clamp(90, keiko.x, 375)
-        keiko.y = clamp(105, keiko.y, 330)
+        keiko.x = clamp(110, keiko.x, 480)
+        keiko.y = clamp(125, keiko.y, 435)
 
     @staticmethod
     def draw(keiko):

@@ -27,7 +27,7 @@ class BehaviorTree:
         self.root.tag_condition()
 
     def run(self):
-        print('\n========================================== NEW TICK =======================================================')
+        # print('\n========================================== NEW TICK =======================================================')
         self.root.run()
         if self.root.value == BehaviorTree.SUCCESS:
             self.root.reset()
@@ -44,7 +44,7 @@ class Node:
     def show_result(f):
         def inner(self):
             result = f(self)
-            print(f'[{self.__class__.__name__:10s}] {self.name:40s} ==> ({result})')
+            # print(f'[{self.__class__.__name__:10s}] {self.name:40s} ==> ({result})')
             return result
 
         return inner

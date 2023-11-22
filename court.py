@@ -6,7 +6,7 @@ class Court:
         self.image = load_image('Court_Japan.png')
 
     def draw(self):
-        self.image.clip_draw(0, 0, 431, 184, 400, 300, 800, 600)
+        self.image.clip_draw(0, 0, 431, 184, 512, 400, 1024, 800)
 
     def update(self):
         pass

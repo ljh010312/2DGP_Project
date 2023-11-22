@@ -133,7 +133,7 @@ class Miyuki:
             return BehaviorTree.RUNNING
 
     def set_random_location(self):
-        self.tx, self.ty = random.randint(390, 690), random.randint(70, 300)
+        self.tx, self.ty = random.randint(510, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
     def build_behavior_tree(self):

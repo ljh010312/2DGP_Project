@@ -25,7 +25,7 @@ class Ball:
 
         self.power -= self.decay_rate
         self.power = clamp(0, self.power, 30)
-        if self.x < 25 or self.x > 800 - 25:
+        if self.x < 25 or self.x > 1024 - 25:
             game_world.remove_object(self)
 
     def get_bb(self):
@@ -59,7 +59,7 @@ class Big_Ball:
 
         self.power -= self.decay_rate
         self.power = clamp(0, self.power, 30)
-        if self.x < 25 or self.x > 800 - 25:
+        if self.x < 25 or self.x > 1024 - 25:
             game_world.remove_object(self)
 
     def get_bb(self):
