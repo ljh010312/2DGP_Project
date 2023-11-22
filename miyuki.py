@@ -77,6 +77,7 @@ class Miyuki:
         self.tx, self.ty = 400, 150
         self.frame = 0
         self.state = 'Idle'
+        self.face_dir = 0
         self.build_behavior_tree()
 
     def get_bb(self):
@@ -87,7 +88,7 @@ class Miyuki:
         self.bt.run()
 
     def draw(self):
-        if math.cos(self.dir) < 0:
+        if math.cos(self.dir) < 0 or self.face_dir == -1:
             self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
                               move_lr[int(self.frame)].w,
                               move_lr[int(self.frame)].h, 0, 'h', self.x, self.y, move_lr[int(self.frame)].w,
@@ -138,8 +139,10 @@ class Miyuki:
 
     def is_oppenent_hold_ball(self):    # 상대가 공을 잡고 있는지
         if play_mode.keiko.hold_ball:
+            self.face_dir = -1
             return BehaviorTree.SUCCESS
         else:
+            self.face_dir = 0
             return BehaviorTree.FAIL
 
     def set_flee_random_location(self): # 코드의 바깥쪽으로 이동
