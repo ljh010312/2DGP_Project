@@ -34,6 +34,9 @@ class Ball:
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
             pass
+        elif group == 'miyuki:ball':
+            game_world.remove_object(self)
+
 
 
 class Big_Ball:

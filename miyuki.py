@@ -4,6 +4,7 @@ import random
 import math
 import game_framework
 import game_world
+from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 import play_mode
 
@@ -79,6 +80,8 @@ class Miyuki:
         self.state = 'Idle'
         self.face_dir = 0
         self.build_behavior_tree()
+        self.hold_ball = False
+        self.ball = None
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
@@ -105,7 +108,11 @@ class Miyuki:
         pass
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'miyuki:ball':
+            if not self.hold_ball:
+                self.ball = Ball(self.x, self.y, self.x, self.y, 0)
+                self.hold_ball = True
+                game_world.add_object(self.ball)
 
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -145,9 +152,20 @@ class Miyuki:
             self.face_dir = 0
             return BehaviorTree.FAIL
 
-    def set_flee_random_location(self): # 코드의 바깥쪽으로 이동
+    def set_flee_random_location(self): # 코드의 바깥쪽 좌표 구하기
         self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
+
+    def is_court_in_ball(self): # 자신의 코트에 공이 있는 지
+        if 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
+
+    def set_ball_location(self):
+        if 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
+            self.tx, self.ty = play_mode.ball.x, play_mode.ball.y
+        return BehaviorTree.SUCCESS
+
 
 
     def build_behavior_tree(self):
@@ -159,4 +177,10 @@ class Miyuki:
         a3 = Action('도망갈 위치 랜덤 설정', self.set_flee_random_location)
 
         root = SEQ_flee = Sequence('도망', c1, a3, a2)
+
+        c2 = Condition('코드에 공이 있는지', self.is_court_in_ball)
+        a4 = Action('공 위치로 설정', self.set_ball_location)
+
+        root = SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
+
         self.bt = BehaviorTree(root)

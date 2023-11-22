@@ -32,6 +32,7 @@ def init():
     global keiko
     global world
     global ball
+    global balls
     running = True
     world = []
 
@@ -45,9 +46,10 @@ def init():
     game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
     game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
 
-    ball = Ball(400, 300, 400, 300, 0)
+    ball = Ball(600, 300, 400, 300, 0)
     game_world.add_object(ball, 1)
     game_world.add_collision_pair('keiko:ball', None, ball)
+    game_world.add_collision_pair('miyuki:ball', None, ball)
 
     balls = [Ball(300, random.randint(100,300), 0, 0, 0) for _ in range(10)]
     game_world.add_objects(balls, 1)
@@ -68,6 +70,7 @@ def init():
 
     miyuki = Miyuki()
     game_world.add_object(miyuki, 2)
+    game_world.add_collision_pair('miyuki:ball', miyuki, None)
 
 
 def update():
