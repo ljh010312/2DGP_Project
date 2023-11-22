@@ -9,12 +9,12 @@ import play_mode
 
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_KMPH = 10.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-TIME_PER_ACTION = 0.5
+TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
@@ -136,9 +136,24 @@ class Miyuki:
         self.tx, self.ty = random.randint(510, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
+    def is_oppenent_hold_ball(self):    # 상대가 공을 잡고 있는지
+        if play_mode.keiko.hold_ball:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def set_flee_random_location(self): # 코드의 바깥쪽으로 이동
+        self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
+        return BehaviorTree.SUCCESS
+
+
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
         a2 = Action('Move to', self.move_to)
         root = SEQ_wander = Sequence('Wander', a1, a2)
 
+        c1 = Condition('상대가 공을 잡고 있는지', self.is_oppenent_hold_ball)
+        a3 = Action('도망갈 위치 랜덤 설정', self.set_flee_random_location)
+
+        root = SEQ_flee = Sequence('도망', c1, a3, a2)
         self.bt = BehaviorTree(root)
