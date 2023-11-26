@@ -4,6 +4,7 @@ import random
 import math
 import game_framework
 import game_world
+import server
 from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 import play_mode
@@ -89,6 +90,7 @@ class Miyuki:
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.bt.run()
+        self.face_dir = -1 if math.cos(self.dir) < 0 else 1
 
     def draw(self):
         if math.cos(self.dir) < 0 or self.face_dir == -1:
@@ -111,6 +113,8 @@ class Miyuki:
         if group == 'miyuki:ball':
             if not self.hold_ball:
                 other.state = 'Hold'
+                other.x = self.x + self.face_dir * 15
+                other.y = self.y
 
 
     def distance_less_than(self, x1, y1, x2, y2, r):
@@ -156,13 +160,13 @@ class Miyuki:
         return BehaviorTree.SUCCESS
 
     def is_court_in_ball(self): # 자신의 코트에 공이 있는 지
-        if play_mode.ball.state == 'Stay' and 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
+        if server.ball.state == 'Stay' and 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
     def set_ball_location(self):
-        if 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
-            self.tx, self.ty = play_mode.ball.x, play_mode.ball.y
+        if 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
+            self.tx, self.ty = server.ball.x, server.ball.y
         return BehaviorTree.SUCCESS
 
     def build_behavior_tree(self):

@@ -403,13 +403,10 @@ class Keiko:
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
             if not self.hold_ball and other.state == 'Stay':
-                # server.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
-                server.ball.x = self.x + self.h_dir * 15
-                server.ball.y = self.y
+                other.x = self.x + self.h_dir * 15
+                other.y = self.y
+                other.state = 'Hold'
                 self.hold_ball = True
-
-                # game_world.add_object(self.ball)
-                # game_world.remove_object(other)
         elif group == 'keiko:power_up_item':
             self.power = 10
             game_world.remove_object(other)

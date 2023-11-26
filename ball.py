@@ -26,7 +26,8 @@ class Ball:
         self.y += self.power * 30 * math.sin(self.direction) * game_framework.frame_time
         self.power -= self.decay_rate
         self.power = clamp(0, self.power, 30)
-        if self.power == 0:
+
+        if self.state == 'Throw' and self.power == 0:
             self.state = 'Stay'
 
         if self.x < 25:
@@ -34,6 +35,8 @@ class Ball:
 
         if self.x > 1024 - 25:
             self.x, self.y = 400, 100
+
+        print(self.state)
 
     def get_bb(self):
         return self.x - 10, self.y - 10, self.x + 10, self.y + 10
