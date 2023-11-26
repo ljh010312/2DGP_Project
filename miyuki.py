@@ -83,6 +83,7 @@ class Miyuki:
         self.build_behavior_tree()
         self.hold_ball = False
         self.ball = None
+        self.power = 0
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
@@ -111,7 +112,8 @@ class Miyuki:
 
     def handle_collision(self, group, other):
         if group == 'miyuki:ball':
-            if not self.hold_ball:
+            if other.state == 'Stay' and not self.hold_ball:
+                self.hold_ball = True
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
@@ -159,14 +161,40 @@ class Miyuki:
         self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
+
     def is_court_in_ball(self): # 자신의 코트에 공이 있는 지
         if server.ball.state == 'Stay' and 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
+
     def set_ball_location(self):
         if 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
             self.tx, self.ty = server.ball.x, server.ball.y
+        return BehaviorTree.SUCCESS
+
+    def is_hold_ball(self):
+        if self.hold_ball:
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
+
+    def is_charge_power(self):
+        if self.power < 3.0:
+            self.power += 0.01
+            return BehaviorTree.FAIL
+        else:
+            return BehaviorTree.SUCCESS
+
+    def throw_ball(self):
+        server.ball.x = self.x + 20
+        server.ball.y = self.y + 25
+        server.ball.target_x = play_mode.keiko.x
+        server.ball.target_y = play_mode.keiko.y
+        server.ball.power = self.power * 5
+        server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
+        server.ball.state = 'Throw'
+        self.power = 0
+        self.hold_ball = False
         return BehaviorTree.SUCCESS
 
     def build_behavior_tree(self):
@@ -177,11 +205,19 @@ class Miyuki:
         c1 = Condition('상대가 공을 잡고 있는지', self.is_oppenent_hold_ball)
         a3 = Action('도망갈 위치 랜덤 설정', self.set_flee_random_location)
 
-        root = SEQ_flee = Sequence('도망', c1, a3, a2)
+        SEQ_flee = Sequence('도망', c1, a3, a2)
 
-        c2 = Condition('코드에 공이 있는지', self.is_court_in_ball)
+        c2 = Condition('코트 공이 있는지', self.is_court_in_ball)
         a4 = Action('공 위치로 설정', self.set_ball_location)
 
-        root = SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
+        SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
+
+        c3 = Condition('공을 잡고 있는지', self.is_hold_ball)
+        c4 = Condition('기 모으기', self.is_charge_power)
+        a6 = Action('던지기', self.throw_ball)
+
+        root = SEQ_throw_ball = Sequence('Throw ball', c3, c4, a6)
+
+
 
         self.bt = BehaviorTree(root)

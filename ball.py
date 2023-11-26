@@ -36,7 +36,6 @@ class Ball:
         if self.x > 1024 - 25:
             self.x, self.y = 400, 100
 
-        print(self.state)
 
     def get_bb(self):
         return self.x - 10, self.y - 10, self.x + 10, self.y + 10
