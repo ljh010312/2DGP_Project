@@ -53,14 +53,14 @@ move_lr = (
 
 
 throw_motion = (
-    Frame(219, 2418, 54, 77),
-    Frame(219, 2418, 54, 77),
-    Frame(284, 2418, 48, 82),
-    Frame(284, 2418, 48, 82),
-    Frame(342, 2418, 56, 75),
-    Frame(342, 2418, 56, 75),
-    Frame(409, 2418, 53, 74),
-    Frame(409, 2418, 53, 74),
+    Frame(219, 1950, 54, 77),
+    Frame(219, 1950, 54, 77),
+    Frame(284, 1950, 48, 82),
+    Frame(284, 1950, 48, 82),
+    Frame(342, 1950, 56, 75),
+    Frame(342, 1950, 56, 75),
+    Frame(409, 1950, 53, 74),
+    Frame(409, 1950, 53, 74),
 )
 
 class Miyuki:
@@ -91,19 +91,32 @@ class Miyuki:
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.bt.run()
-        self.face_dir = -1 if math.cos(self.dir) < 0 else 1
+        # self.face_dir = -1 if math.cos(self.dir) < 0 else 1
 
     def draw(self):
-        if math.cos(self.dir) < 0 or self.face_dir == -1:
-            self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
-                              move_lr[int(self.frame)].w,
-                              move_lr[int(self.frame)].h, 0, 'h', self.x, self.y, move_lr[int(self.frame)].w,
-                              move_lr[int(self.frame)].h)
-        else:
-            self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
-                                           move_lr[int(self.frame)].w,
-                                           move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
-                                           move_lr[int(self.frame)].h)
+        if self.state == 'Walk':
+            if math.cos(self.dir) < 0 or self.face_dir == -1:
+                self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
+                                  move_lr[int(self.frame)].w,
+                                  move_lr[int(self.frame)].h, 0, 'h', self.x, self.y, move_lr[int(self.frame)].w,
+                                  move_lr[int(self.frame)].h)
+            else:
+                self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
+                                               move_lr[int(self.frame)].w,
+                                               move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
+                                               move_lr[int(self.frame)].h)
+        elif self.state == 'Charge':
+            self.image.clip_composite_draw(throw_motion[0].x, throw_motion[0].y,
+                                           throw_motion[0].w,
+                                           throw_motion[0].h, 0, 'h', self.x, self.y,
+                                           throw_motion[0].w,
+                                           throw_motion[0].h)
+        elif self.state == 'Throw':
+            self.image.clip_composite_draw(throw_motion[int(self.frame)].x, throw_motion[int(self.frame)].y,
+                                           throw_motion[int(self.frame)].w,
+                                           throw_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
+                                           throw_motion[int(self.frame)].w,
+                                           throw_motion[int(self.frame)].h)
 
         draw_rectangle(*self.get_bb())
 
@@ -179,6 +192,7 @@ class Miyuki:
         return BehaviorTree.FAIL
 
     def charge_power(self):
+        self.state = 'Charge'
         if self.power > 3.0:
             return BehaviorTree.SUCCESS
         else:
@@ -186,15 +200,20 @@ class Miyuki:
             return BehaviorTree.RUNNING
 
     def throw_ball(self):
-        server.ball.x = self.x + 20
-        server.ball.y = self.y + 25
-        server.ball.target_x = play_mode.keiko.x
-        server.ball.target_y = play_mode.keiko.y
-        server.ball.power = self.power * 5
-        server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
-        server.ball.state = 'Throw'
-        self.power = 0
-        self.hold_ball = False
+        if self.state != 'Throw':
+            self.frame = 0
+            self.state = 'Throw'
+            server.ball.x = self.x + 20
+            server.ball.y = self.y + 25
+            server.ball.target_x = play_mode.keiko.x
+            server.ball.target_y = play_mode.keiko.y
+            server.ball.power = self.power * 5
+            server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
+            server.ball.state = 'Throw'
+            self.power = 0
+            self.hold_ball = False
+        if self.frame < 7:
+            return BehaviorTree.RUNNING
         return BehaviorTree.SUCCESS
 
     def build_behavior_tree(self):
