@@ -157,7 +157,7 @@ class Miyuki:
             self.face_dir = 0
             return BehaviorTree.FAIL
 
-    def set_flee_random_location(self): # 코드의 바깥쪽 좌표 구하기
+    def set_flee_random_location(self): # 코트의 바깥쪽 좌표 구하기
         self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
@@ -178,12 +178,12 @@ class Miyuki:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
-    def is_charge_power(self):
-        if self.power < 3.0:
-            self.power += 0.01
-            return BehaviorTree.FAIL
-        else:
+    def charge_power(self):
+        if self.power > 3.0:
             return BehaviorTree.SUCCESS
+        else:
+            self.power += 0.01
+            return BehaviorTree.RUNNING
 
     def throw_ball(self):
         server.ball.x = self.x + 20
@@ -200,7 +200,7 @@ class Miyuki:
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
         a2 = Action('Move to', self.move_to)
-        root = SEQ_wander = Sequence('Wander', a1, a2)
+        SEQ_wander = Sequence('Wander', a1, a2)
 
         c1 = Condition('상대가 공을 잡고 있는지', self.is_oppenent_hold_ball)
         a3 = Action('도망갈 위치 랜덤 설정', self.set_flee_random_location)
@@ -210,14 +210,15 @@ class Miyuki:
         c2 = Condition('코트 공이 있는지', self.is_court_in_ball)
         a4 = Action('공 위치로 설정', self.set_ball_location)
 
-        SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
+        root = SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
 
         c3 = Condition('공을 잡고 있는지', self.is_hold_ball)
-        c4 = Condition('기 모으기', self.is_charge_power)
+        a5 = Action('기 모으기', self.charge_power)
         a6 = Action('던지기', self.throw_ball)
 
-        root = SEQ_throw_ball = Sequence('Throw ball', c3, c4, a6)
+        root = SEQ_throw_ball = Sequence('공 던지기', c3, a5, a6)
 
-
+        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_ball_loc_move, SEQ_throw_ball, SEQ_wander)
+        root = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
 
         self.bt = BehaviorTree(root)
