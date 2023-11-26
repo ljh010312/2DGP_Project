@@ -3,6 +3,7 @@ import random
 from pico2d import *
 
 import game_framework
+import server
 from big_ball_potion import Big_Ball_Potion
 from keiko import Keiko
 from court import Court
@@ -42,35 +43,35 @@ def init():
     keiko = Keiko()
     game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
-    game_world.add_collision_pair('keiko:power_up_item', keiko, None)
-    game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
-    game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
+    # game_world.add_collision_pair('keiko:power_up_item', keiko, None)
+    # game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
+    # game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
 
-    ball = Ball(600, 300, 400, 300, 0)
-    game_world.add_object(ball, 1)
-    game_world.add_collision_pair('keiko:ball', None, ball)
-    game_world.add_collision_pair('miyuki:ball', None, ball)
+    server.ball = Ball(400, 300, 400, 300, 0)
+    game_world.add_object(server.ball, 1)
+    game_world.add_collision_pair('keiko:ball', None, server.ball)
+    game_world.add_collision_pair('miyuki:ball', None, server.ball)
 
-    balls = [Ball(300, random.randint(100,300), 0, 0, 0) for _ in range(10)]
-    game_world.add_objects(balls, 1)
-    for b in balls:
-        game_world.add_collision_pair('keiko:ball', None, b)
+    # balls = [Ball(300, random.randint(100,300), 0, 0, 0) for _ in range(10)]
+    # game_world.add_objects(balls, 1)
+    # for b in balls:
+    #     game_world.add_collision_pair('keiko:ball', None, b)
 
-    power_up_item = Power_Up_Item(200, 300 )
-    game_world.add_object(power_up_item, 1)
-    game_world.add_collision_pair('keiko:power_up_item', None, power_up_item)
+    # power_up_item = Power_Up_Item(200, 300 )
+    # game_world.add_object(power_up_item, 1)
+    # game_world.add_collision_pair('keiko:power_up_item', None, power_up_item)
+    #
+    # shrink_potion = Shrink_Potion(200, 200)
+    # game_world.add_object(shrink_potion, 1)
+    # game_world.add_collision_pair('keiko:shrink_potion', None, shrink_potion)
+    #
+    # big_ball_potion = Big_Ball_Potion(100, 200)
+    # game_world.add_object(big_ball_potion, 1)
+    # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    shrink_potion = Shrink_Potion(200, 200)
-    game_world.add_object(shrink_potion, 1)
-    game_world.add_collision_pair('keiko:shrink_potion', None, shrink_potion)
-
-    big_ball_potion = Big_Ball_Potion(100, 200)
-    game_world.add_object(big_ball_potion, 1)
-    game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
-
-    miyuki = Miyuki()
-    game_world.add_object(miyuki, 2)
-    game_world.add_collision_pair('miyuki:ball', miyuki, None)
+    # miyuki = Miyuki()
+    # game_world.add_object(miyuki, 2)
+    # game_world.add_collision_pair('miyuki:ball', miyuki, None)
 
 
 def update():

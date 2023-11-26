@@ -15,6 +15,8 @@ class Ball:
         self.direction = math.atan2(self.target_y - self.y, self.target_x - self.x)
         self.decay_rate = 0.02
 
+        self.state = 'Stay'
+
     def draw(self):
         self.image.clip_draw(3, 51, 26, 26, self.x, self.y, 20, 20)
         draw_rectangle(*self.get_bb())
@@ -22,11 +24,16 @@ class Ball:
     def update(self):
         self.x += self.power * 30 * math.cos(self.direction) * game_framework.frame_time
         self.y += self.power * 30 * math.sin(self.direction) * game_framework.frame_time
-
         self.power -= self.decay_rate
         self.power = clamp(0, self.power, 30)
-        if self.x < 25 or self.x > 1024 - 25:
-            game_world.remove_object(self)
+        if self.power == 0:
+            self.state = 'Stay'
+
+        if self.x < 25:
+            self.x, self.y = 200, 100
+
+        if self.x > 1024 - 25:
+            self.x, self.y = 400, 100
 
     def get_bb(self):
         return self.x - 10, self.y - 10, self.x + 10, self.y + 10
@@ -35,7 +42,7 @@ class Ball:
         if group == 'keiko:ball':
             pass
         elif group == 'miyuki:ball':
-            game_world.remove_object(self)
+            pass
 
 
 

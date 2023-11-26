@@ -1,4 +1,5 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
+import math
 
 from pico2d import load_image, draw_rectangle, clamp, get_time
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s, SDL_MOUSEBUTTONDOWN, \
@@ -6,6 +7,7 @@ from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, 
 
 import game_framework
 import game_world
+import server
 from ball import Ball, Big_Ball
 
 
@@ -134,11 +136,17 @@ class Throw_Ball:
         keiko.frame = 0
         keiko.hold_ball = False
         keiko.wait_time = get_time()
-        game_world.remove_object(keiko.ball)
 
         if keiko.item == 'ball':
-            ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
-            game_world.add_object(ball)
+            # ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
+            server.ball.x = keiko.x - 20
+            server.ball.y = keiko.y + 25
+            server.ball.target_x = e[1].x
+            server.ball.target_y = 800 - 1 - e[1].y
+            server.ball.power = keiko.power * 5
+            server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
+            server.ball.state = 'Throw'
+            # game_world.add_object(ball)
         elif keiko.item == 'big_ball':
             big_ball = Big_Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
             game_world.add_object(big_ball)
@@ -360,7 +368,6 @@ class Keiko:
         self.state_machine.start()
         self.hold_ball = False
         self.charging = False
-        self.ball = None
         self.power = 0
         self.shrink = 1
         self.shrink_start_time = 0
@@ -372,11 +379,11 @@ class Keiko:
             if get_time() - self.shrink_start_time > 5.0:
                 self.shrink = 1
         if self.charging:
-            self.ball.x = self.x - 20
-            self.ball.y = self.y + 25
+            server.ball.x = self.x - 20
+            server.ball.y = self.y + 25
         elif self.hold_ball:
-            self.ball.x = self.x + self.face_dir * 15
-            self.ball.y = self.y
+            server.ball.x = self.x + self.face_dir * 15
+            server.ball.y = self.y
 
     def handle_event(self, event):
         if event.button == SDL_BUTTON_LEFT:
@@ -395,11 +402,14 @@ class Keiko:
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
-            if not self.hold_ball:
-                self.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
+            if not self.hold_ball and other.state == 'Stay':
+                # server.ball = Ball(self.x + self.h_dir * 15, self.y, self.x, self.y, 0)
+                server.ball.x = self.x + self.h_dir * 15
+                server.ball.y = self.y
                 self.hold_ball = True
-                game_world.add_object(self.ball)
-                game_world.remove_object(other)
+
+                # game_world.add_object(self.ball)
+                # game_world.remove_object(other)
         elif group == 'keiko:power_up_item':
             self.power = 10
             game_world.remove_object(other)

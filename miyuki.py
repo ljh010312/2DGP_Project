@@ -110,9 +110,8 @@ class Miyuki:
     def handle_collision(self, group, other):
         if group == 'miyuki:ball':
             if not self.hold_ball:
-                self.ball = Ball(self.x, self.y, self.x, self.y, 0)
-                self.hold_ball = True
-                game_world.add_object(self.ball)
+                other.state = 'Hold'
+
 
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -157,7 +156,7 @@ class Miyuki:
         return BehaviorTree.SUCCESS
 
     def is_court_in_ball(self): # 자신의 코트에 공이 있는 지
-        if 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
+        if play_mode.ball.state == 'Stay' and 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
@@ -165,8 +164,6 @@ class Miyuki:
         if 510 < play_mode.ball.x < 870 and 127 < play_mode.ball.y < 435:
             self.tx, self.ty = play_mode.ball.x, play_mode.ball.y
         return BehaviorTree.SUCCESS
-
-
 
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
