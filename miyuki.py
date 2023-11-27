@@ -16,7 +16,7 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-TIME_PER_ACTION = 1.0
+TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
@@ -193,7 +193,9 @@ class Miyuki:
 
     def charge_power(self):
         self.state = 'Charge'
-        if self.power > 3.0:
+        server.ball.x = self.x + 20
+        server.ball.y = self.y + 30
+        if self.power > 4.0:
             return BehaviorTree.SUCCESS
         else:
             self.power += 0.01
@@ -211,10 +213,11 @@ class Miyuki:
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
             server.ball.state = 'Throw'
             self.power = 0
-            self.hold_ball = False
         if self.frame < 7:
             return BehaviorTree.RUNNING
-        return BehaviorTree.SUCCESS
+        else:
+            self.hold_ball = False
+            return BehaviorTree.SUCCESS
 
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
