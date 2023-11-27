@@ -89,7 +89,7 @@ class Miyuki:
         self.speed = 0.0
         self.tx, self.ty = 400, 150
         self.frame = 0
-        self.state = 'Idle'
+        self.state = 'Walk'
         self.face_dir = 0
         self.build_behavior_tree()
         self.hold_ball = False
@@ -128,13 +128,13 @@ class Miyuki:
                                            throw_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
                                            throw_motion[int(self.frame)].w,
                                            throw_motion[int(self.frame)].h)
-        elif self.state == 'HitMotion':
+        elif self.state == 'HitMotion' or self.state == 'Hit':
             self.image.clip_composite_draw(hit_motion[int(self.frame)].x, hit_motion[int(self.frame)].y,
                                            hit_motion[int(self.frame)].w,
                                            hit_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
                                            hit_motion[int(self.frame)].w,
                                            hit_motion[int(self.frame)].h)
-        elif self.state == 'OutCount':
+        elif self.state == 'OutCount' or self.state == 'Out':
             self.image.clip_composite_draw(hit_motion[7].x, hit_motion[7].y,
                                            hit_motion[7].w,
                                            hit_motion[7].h, 0, 'h', self.x, self.y,
