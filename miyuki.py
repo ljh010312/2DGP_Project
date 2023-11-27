@@ -134,7 +134,12 @@ class Miyuki:
                                            hit_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
                                            hit_motion[int(self.frame)].w,
                                            hit_motion[int(self.frame)].h)
-
+        elif self.state == 'OutCount':
+            self.image.clip_composite_draw(hit_motion[7].x, hit_motion[7].y,
+                                           hit_motion[7].w,
+                                           hit_motion[7].h, 0, 'h', self.x, self.y,
+                                           hit_motion[7].w,
+                                           hit_motion[7].h)
         draw_rectangle(*self.get_bb())
 
     def handle_event(self, event):
@@ -256,7 +261,22 @@ class Miyuki:
             self.state = 'Out'
             return BehaviorTree.SUCCESS
 
-    
+    def is_out(self):
+        if self.state == 'Out':
+            return BehaviorTree.SUCCESS
+        elif self.state == 'OutCount':
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
+
+    def out_count(self):
+        if self.state == 'Out':
+            self.state = 'OutCount'
+            self.wait_time = get_time()
+
+        if get_time() - self.wait_time < 3.0:
+            return BehaviorTree.RUNNING
+        else:
+            game_world.remove_object(self)
 
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
@@ -285,5 +305,12 @@ class Miyuki:
         c4 = Condition('공과 충돌 했는지', self.is_hit)
         a7 = Action('공 맞는 모션', self.hit_motion)
         root = SEQ_hit_ball = Sequence('공 맞음', c4, a7)
+
+        c5 = Condition('공을 맞아서 누워있는지', self.is_out)
+        a8 = Action('아웃 카운트', self.out_count)
+        root = SEQ_out = Sequence('아웃카운트 후 미유키 삭제', c5, a8)
+
+        root = SEL_out_or_hit = Selector('out or hit', SEQ_out, SEQ_hit_ball)
+
 
         self.bt = BehaviorTree(root)
