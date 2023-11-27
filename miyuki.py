@@ -63,6 +63,17 @@ throw_motion = (
     Frame(409, 1950, 53, 74),
 )
 
+hit_motion = (
+    Frame(261, 376, 56, 82),
+    Frame(261, 376, 56, 82),
+    Frame(364, 381, 75, 71),
+    Frame(364, 381, 75, 71),
+    Frame(443, 381, 82, 67),
+    Frame(443, 381, 82, 67),
+    Frame(542, 381, 85, 48),
+    Frame(643, 381, 98, 45)
+)
+
 class Miyuki:
     image = None
 
@@ -117,6 +128,12 @@ class Miyuki:
                                            throw_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
                                            throw_motion[int(self.frame)].w,
                                            throw_motion[int(self.frame)].h)
+        elif self.state == 'HitMotion':
+            self.image.clip_composite_draw(hit_motion[int(self.frame)].x, hit_motion[int(self.frame)].y,
+                                           hit_motion[int(self.frame)].w,
+                                           hit_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
+                                           hit_motion[int(self.frame)].w,
+                                           hit_motion[int(self.frame)].h)
 
         draw_rectangle(*self.get_bb())
 
@@ -130,6 +147,9 @@ class Miyuki:
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
+            elif other.state == 'Throw':
+                self.state = 'Hit'
+
 
 
     def distance_less_than(self, x1, y1, x2, y2, r):
@@ -219,6 +239,25 @@ class Miyuki:
             self.hold_ball = False
             return BehaviorTree.SUCCESS
 
+    def is_hit(self):
+        if self.state == 'Hit':
+            self.frame = 0
+            return BehaviorTree.SUCCESS
+        elif self.state == 'HitMotion':
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
+
+    def hit_motion(self):
+        if self.state == 'Hit':
+            self.state = 'HitMotion'
+        if self.frame < 7.9:
+            return BehaviorTree.RUNNING
+        else:
+            self.state = 'Out'
+            return BehaviorTree.SUCCESS
+
+    
+
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
         a2 = Action('Move to', self.move_to)
@@ -242,5 +281,9 @@ class Miyuki:
 
         SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_ball_loc_move, SEQ_throw_ball, SEQ_wander)
         root = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
+
+        c4 = Condition('공과 충돌 했는지', self.is_hit)
+        a7 = Action('공 맞는 모션', self.hit_motion)
+        root = SEQ_hit_ball = Sequence('공 맞음', c4, a7)
 
         self.bt = BehaviorTree(root)
