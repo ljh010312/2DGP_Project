@@ -145,7 +145,7 @@ class Throw_Ball:
             server.ball.target_y = 800 - 1 - e[1].y
             server.ball.power = keiko.power * 5
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
-            server.ball.state = 'Throw'
+            server.ball.state = 'KeikoThrow'
             # game_world.add_object(ball)
         elif keiko.item == 'big_ball':
             big_ball = Big_Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)

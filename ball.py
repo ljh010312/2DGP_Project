@@ -27,7 +27,7 @@ class Ball:
         self.power -= self.decay_rate
         self.power = clamp(0, self.power, 30)
 
-        if self.state == 'Throw' and self.power == 0:
+        if (self.state == 'KeikoThrow' or self.state == 'Throw') and self.power == 0:
             self.state = 'Stay'
 
         if self.x < 25:

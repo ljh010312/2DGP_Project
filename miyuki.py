@@ -152,7 +152,7 @@ class Miyuki:
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
-            elif other.state == 'Throw':
+            elif other.state == 'KeikoThrow':
                 self.state = 'Hit'
 
 
@@ -220,7 +220,7 @@ class Miyuki:
         self.state = 'Charge'
         server.ball.x = self.x + 20
         server.ball.y = self.y + 30
-        if self.power > 4.0:
+        if self.power > 3.0:
             return BehaviorTree.SUCCESS
         else:
             self.power += 0.01
@@ -256,6 +256,8 @@ class Miyuki:
         if self.state == 'Hit':
             self.state = 'HitMotion'
         if self.frame < 7.9:
+            self.x += RUN_SPEED_PPS  * game_framework.frame_time
+            self.y -= (RUN_SPEED_PPS / 2) * game_framework.frame_time
             return BehaviorTree.RUNNING
         else:
             self.state = 'Out'
@@ -300,7 +302,7 @@ class Miyuki:
         root = SEQ_throw_ball = Sequence('공 던지기', c3, a5, a6)
 
         SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_ball_loc_move, SEQ_throw_ball, SEQ_wander)
-        root = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
+        root = SEL_flee_or_throw =Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
 
         c4 = Condition('공과 충돌 했는지', self.is_hit)
         a7 = Action('공 맞는 모션', self.hit_motion)
@@ -310,7 +312,8 @@ class Miyuki:
         a8 = Action('아웃 카운트', self.out_count)
         root = SEQ_out = Sequence('아웃카운트 후 미유키 삭제', c5, a8)
 
-        root = SEL_out_or_hit = Selector('out or hit', SEQ_out, SEQ_hit_ball)
+        root = SEL_hit_and_out = Selector('out or hit', SEQ_out, SEQ_hit_ball)
 
+        root = SEL_hit_or_move = Selector('hit or move', SEL_hit_and_out, SEL_flee_or_throw)
 
         self.bt = BehaviorTree(root)
