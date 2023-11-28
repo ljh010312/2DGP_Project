@@ -232,6 +232,7 @@ class Miyuki:
             self.state = 'Throw'
             server.ball.x = self.x + 20
             server.ball.y = self.y + 25
+            server.ball.z = 40
             server.ball.target_x = play_mode.keiko.x
             server.ball.target_y = play_mode.keiko.y
             server.ball.power = self.power * 5

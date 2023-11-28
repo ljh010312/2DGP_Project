@@ -141,6 +141,7 @@ class Throw_Ball:
             # ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
             server.ball.x = keiko.x - 20
             server.ball.y = keiko.y + 25
+            server.ball.z = 40
             server.ball.target_x = e[1].x
             server.ball.target_y = 800 - 1 - e[1].y
             server.ball.power = keiko.power * 5

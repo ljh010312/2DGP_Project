@@ -47,7 +47,7 @@ def init():
     # game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
     # game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
 
-    server.ball = Ball(400, 300, 400, 300, 0)
+    server.ball = Ball(400, 300, 40, 400, 300, 0)
     game_world.add_object(server.ball, 1)
     game_world.add_collision_pair('keiko:ball', None, server.ball)
     game_world.add_collision_pair('miyuki:ball', None, server.ball)
