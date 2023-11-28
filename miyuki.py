@@ -154,6 +154,7 @@ class Miyuki:
                 other.y = self.y
             elif other.state == 'KeikoThrow':
                 self.state = 'Hit'
+                other.direction += math.pi
 
 
 
