@@ -31,14 +31,14 @@ class Ball:
         self.power = power
         self.direction = math.atan2(self.target_y - self.y, self.target_x - self.x)
         self.decay_rate = 0.01
-
+        self.shadow_scale = 1
         self.state = 'Stay'
 
 
 
     def draw(self):
         if not self.state == 'Hold':
-            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y, 30, 20)
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y, 25 * self.shadow_scale, 15* self.shadow_scale)
         self.image.clip_draw(3, 51, 26, 26, self.x, self.y, 20, 20)
 
         draw_rectangle(*self.get_bb())
@@ -48,8 +48,9 @@ class Ball:
         self.x += self.power * 30 * math.cos(self.direction) * game_framework.frame_time
         self.z += self.z_speed * game_framework.frame_time
         self.y += self.power * 30 * math.sin(self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
-        self.shadow_y = self.y - self.z
+        self.shadow_y = self.y - self.z - 10
         self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
+        self.shadow_scale = 1 - (self.z / 50)
         if self.z < 0:
             self.bound()
 
