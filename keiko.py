@@ -52,6 +52,17 @@ throw_motion = (
     Frame(712, 1814, 66, 67),
 )
 
+hit_motion = (
+    Frame(257, 315, 43, 68),
+    Frame(257, 315, 43, 68),
+    Frame(363, 320, 60, 63),
+    Frame(363, 320, 60, 63),
+    Frame(448, 323, 69, 57),
+    Frame(448, 323, 69, 57),
+    Frame(544, 331, 87, 36),
+    Frame(544, 331, 87, 36)
+)
+
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -66,6 +77,11 @@ FRAMES_PER_ACTION = 8
 def time_out(e):
     return e[0] == 'TIME_OUT'
 
+def hit_by_the_ball(e):
+    return e[0] == 'HIT'
+
+def out(e):
+    return e[0] == 'OUT'
 
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
@@ -106,6 +122,49 @@ def left_mouse_down(e):
 def left_mouse_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_MOUSEBUTTONUP and e[1].button == SDL_BUTTON_LEFT
 
+
+class Out:
+    @staticmethod
+    def enter(keiko, e):
+        keiko.wait_time = get_time()
+
+    @staticmethod
+    def exit(keiko, e):
+        pass
+
+    @staticmethod
+    def do(keiko):
+        if get_time() - keiko.wait_time > 3.0:
+            game_world.remove_object(keiko)
+
+
+    @staticmethod
+    def draw(keiko):
+        keiko.image.clip_draw(650, 334, 91, 35, keiko.x, keiko.y, 91 / keiko.shrink, 35 / keiko.shrink)
+
+
+class Hit_motion:
+    @staticmethod
+    def enter(keiko, e):
+        keiko.frame = 0
+
+    @staticmethod
+    def exit(keiko, e):
+        pass
+
+    @staticmethod
+    def do(keiko):
+        keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        if keiko.frame > 7.5:
+            keiko.state_machine.handle_event(('OUT', 0))
+
+    @staticmethod
+    def draw(keiko):
+        keiko.image.clip_draw(hit_motion[int(keiko.frame)].x, hit_motion[int(keiko.frame)].y,
+                              hit_motion[int(keiko.frame)].w,
+                              hit_motion[int(keiko.frame)].h, keiko.x, keiko.y,
+                              hit_motion[int(keiko.frame)].w / keiko.shrink,
+                              hit_motion[int(keiko.frame)].h / keiko.shrink)
 
 class Charging:
     @staticmethod
@@ -317,19 +376,21 @@ class StateMachine:
         self.cur_state = Idle
         self.table = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
-                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging},
+                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging, hit_by_the_ball: Hit_motion},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Dia_Run,
-                  down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run},
+                  down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run, hit_by_the_ball: Hit_motion},
             Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle, right_down: Dia_Run,
-                      left_down: Dia_Run, right_up: Dia_Run, left_up: Dia_Run},
+                      left_down: Dia_Run, right_up: Dia_Run, left_up: Dia_Run, hit_by_the_ball: Hit_motion},
             Dia_Run: {up_up: Run, down_up: Run, right_up: Up_Down, left_up: Up_Down, right_down: Up_Down,
-                      left_down: Up_Down, up_down: Run, down_down: Run},
+                      left_down: Up_Down, up_down: Run, down_down: Run, hit_by_the_ball: Hit_motion},
             Throw_Ball: {time_out: Idle, right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down,
                          down_down: Up_Down,
-                         up_up: Up_Down, down_up: Up_Down},
+                         up_up: Up_Down, down_up: Up_Down, hit_by_the_ball: Hit_motion},
             Charging: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down,
                        down_down: Up_Down,
-                       up_up: Up_Down, down_up: Up_Down, left_mouse_up: Throw_Ball}
+                       up_up: Up_Down, down_up: Up_Down, left_mouse_up: Throw_Ball, hit_by_the_ball: Hit_motion},
+            Hit_motion: {out: Out},
+            Out: {}
         }
 
     def start(self):
@@ -402,6 +463,11 @@ class Keiko:
                 other.y = self.y
                 other.state = 'Hold'
                 self.hold_ball = True
+            if other.state == 'Throw':
+                #여기에 맞았을 때 추가
+                self.state_machine.handle_event(('HIT', 0))
+                other.direction += math.pi
+
         elif group == 'keiko:power_up_item':
             self.power = 10
             game_world.remove_object(other)
