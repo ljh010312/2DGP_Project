@@ -9,7 +9,6 @@ from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 import play_mode
 
-
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -41,16 +40,15 @@ idle_state = (
 )
 
 move_lr = (
-    Frame(18,2178,36,81),
-    Frame(18,2178,36,81),
-    Frame(60,2178,41,80),
-    Frame(60,2178,41,80),
-    Frame(107,2178,36,81),
-    Frame(107,2178,36,81),
-    Frame(149,2178,41,80),
-    Frame(149,2178,41,80),
+    Frame(18, 2178, 36, 81),
+    Frame(18, 2178, 36, 81),
+    Frame(60, 2178, 41, 80),
+    Frame(60, 2178, 41, 80),
+    Frame(107, 2178, 36, 81),
+    Frame(107, 2178, 36, 81),
+    Frame(149, 2178, 41, 80),
+    Frame(149, 2178, 41, 80),
 )
-
 
 throw_motion = (
     Frame(219, 1950, 54, 77),
@@ -74,6 +72,7 @@ hit_motion = (
     Frame(643, 381, 98, 45)
 )
 
+
 class Miyuki:
     image = None
 
@@ -81,7 +80,7 @@ class Miyuki:
         if Miyuki.image == None:
             Miyuki.image = load_image('miyuki.png')
 
-    def __init__(self, x = None, y = None):
+    def __init__(self, x=None, y=None):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -108,14 +107,15 @@ class Miyuki:
         if self.state == 'Walk':
             if math.cos(self.dir) < 0 or self.face_dir == -1:
                 self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
-                                  move_lr[int(self.frame)].w,
-                                  move_lr[int(self.frame)].h, 0, 'h', self.x, self.y, move_lr[int(self.frame)].w,
-                                  move_lr[int(self.frame)].h)
+                                               move_lr[int(self.frame)].w,
+                                               move_lr[int(self.frame)].h, 0, 'h', self.x, self.y,
+                                               move_lr[int(self.frame)].w,
+                                               move_lr[int(self.frame)].h)
             else:
                 self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
-                                               move_lr[int(self.frame)].w,
-                                               move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
-                                               move_lr[int(self.frame)].h)
+                                     move_lr[int(self.frame)].w,
+                                     move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
+                                     move_lr[int(self.frame)].h)
         elif self.state == 'Charge':
             self.image.clip_composite_draw(throw_motion[0].x, throw_motion[0].y,
                                            throw_motion[0].w,
@@ -156,12 +156,9 @@ class Miyuki:
                 self.state = 'Hit'
                 other.direction += math.pi
 
-
-
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
-
 
     def build_behavior_tree(self):
         pass
@@ -176,7 +173,7 @@ class Miyuki:
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
-    def move_to(self, r = 0.5):
+    def move_to(self, r=0.5):
         self.state = 'Walk'
         self.move_slightly_to(self.tx, self.ty)
         if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):
@@ -188,7 +185,7 @@ class Miyuki:
         self.tx, self.ty = random.randint(510, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
-    def is_oppenent_hold_ball(self):    # 상대가 공을 잡고 있는지
+    def is_oppenent_hold_ball(self):  # 상대가 공을 잡고 있는지
         if play_mode.keiko.hold_ball:
             self.face_dir = -1
             return BehaviorTree.SUCCESS
@@ -196,16 +193,14 @@ class Miyuki:
             self.face_dir = 0
             return BehaviorTree.FAIL
 
-    def set_flee_random_location(self): # 코트의 바깥쪽 좌표 구하기
+    def set_flee_random_location(self):  # 코트의 바깥쪽 좌표 구하기
         self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
-
-    def is_court_in_ball(self): # 자신의 코트에 공이 있는 지
+    def is_court_in_ball(self):  # 자신의 코트에 공이 있는 지
         if server.ball.state == 'Stay' and 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
-
 
     def set_ball_location(self):
         if 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
@@ -230,7 +225,8 @@ class Miyuki:
     def throw_ball(self):
         if self.state != 'Throw':
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
-                                         "target_x": play_mode.keiko.x, "target_y": play_mode.keiko.y, "is_bound": False,
+                                         "target_x": play_mode.keiko.x, "target_y": play_mode.keiko.y,
+                                         "is_bound": False,
                                          "power": self.power * 5, "state": 'Throw'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
@@ -255,7 +251,7 @@ class Miyuki:
         if self.state == 'Hit':
             self.state = 'HitMotion'
         if self.frame < 7.9:
-            self.x += RUN_SPEED_PPS  * game_framework.frame_time
+            self.x += RUN_SPEED_PPS * game_framework.frame_time
             self.y -= (RUN_SPEED_PPS / 2) * game_framework.frame_time
             return BehaviorTree.RUNNING
         else:
@@ -300,8 +296,9 @@ class Miyuki:
 
         root = SEQ_throw_ball = Sequence('공 던지기', c3, a5, a6)
 
-        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_ball_loc_move, SEQ_throw_ball, SEQ_wander)
-        root = SEL_flee_or_throw =Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
+        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_ball_loc_move, SEQ_throw_ball,
+                                                       SEQ_wander)
+        root = SEL_flee_or_throw = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
 
         c4 = Condition('공과 충돌 했는지', self.is_hit)
         a7 = Action('공 맞는 모션', self.hit_motion)

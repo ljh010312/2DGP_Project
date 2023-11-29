@@ -34,7 +34,6 @@ class Ball:
         self.state = 'Stay'
         self.is_bound = False
 
-
     def draw(self):
         if not self.state == 'Hold':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y, 25 * self.shadow_scale,
@@ -46,7 +45,8 @@ class Ball:
     def update(self):
         self.x += self.power * 30 * math.cos(self.direction) * game_framework.frame_time
         self.z += self.z_speed * game_framework.frame_time
-        self.y += self.power * 30 * math.sin(self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
+        self.y += self.power * 30 * math.sin(
+            self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
         self.shadow_y = self.y - self.z - 10
         if self.z > 0.0:
             self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
