@@ -152,7 +152,7 @@ class Miyuki:
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
-            elif other.state == 'KeikoThrow':
+            elif other.state == 'KeikoThrow' and not other.is_bound:
                 self.state = 'Hit'
                 other.direction += math.pi
 

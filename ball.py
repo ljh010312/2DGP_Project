@@ -30,9 +30,10 @@ class Ball:
         self.target_x, self.target_y = target_x, target_y
         self.power = power
         self.direction = math.atan2(self.target_y - self.y, self.target_x - self.x)
-        self.decay_rate = 0.01
         self.shadow_scale = 1
         self.state = 'Stay'
+        self.is_bound = False
+
 
     def draw(self):
         if not self.state == 'Hold':
@@ -47,12 +48,12 @@ class Ball:
         self.z += self.z_speed * game_framework.frame_time
         self.y += self.power * 30 * math.sin(self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
         self.shadow_y = self.y - self.z - 10
-        self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
-
+        if self.z > 0.0:
+            self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
+        print(self.is_bound)
         self.shadow_scale = 1 - (self.z / 50)
         if self.z < 0:
             self.bound()
-        print(self.state)
         if (self.state == 'KeikoThrow' or self.state == 'Throw') and self.power == 0:
             self.state = 'Stay'
 
@@ -69,11 +70,12 @@ class Ball:
             self.direction += 3.141592 / 2
 
     def bound(self):
-        bound_decay = 2
+        bound_decay = 0.5
         set_stop = 2
+        self.is_bound = True
         self.z = 0.0
-        self.z_speed = abs(self.z_speed / bound_decay)
-        self.power = self.power / bound_decay
+        self.z_speed = abs(self.z_speed) * bound_decay
+        self.power = self.power * bound_decay
         if abs(self.z_speed) < set_stop: self.z_speed = 0.0
         if self.power < set_stop: self.power = 0.0
 
