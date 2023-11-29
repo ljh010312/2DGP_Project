@@ -229,16 +229,13 @@ class Miyuki:
 
     def throw_ball(self):
         if self.state != 'Throw':
+            server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
+                                         "target_x": play_mode.keiko.x, "target_y": play_mode.keiko.y, "is_bound": False,
+                                         "power": self.power * 5, "state": 'Throw'})
+            server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
+                                               server.ball.target_x - server.ball.x)
             self.frame = 0
             self.state = 'Throw'
-            server.ball.x = self.x + 20
-            server.ball.y = self.y + 25
-            server.ball.z = 40
-            server.ball.target_x = play_mode.keiko.x
-            server.ball.target_y = play_mode.keiko.y
-            server.ball.power = self.power * 5
-            server.ball.direction = math.atan2(server.ball.target_y - server.ball.y, server.ball.target_x - server.ball.x)
-            server.ball.state = 'Throw'
             self.power = 0
         if self.frame < 7:
             return BehaviorTree.RUNNING

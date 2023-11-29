@@ -138,7 +138,6 @@ class Throw_Ball:
         keiko.wait_time = get_time()
 
         if keiko.item == 'ball':
-            # ball = Ball(keiko.x-20, keiko.y+25, e[1].x, 800 - 1 - e[1].y, keiko.power * 5)
             server.ball.__dict__.update({"x": keiko.x - 20, "y": keiko.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,
                                          "power": keiko.power * 5, "state": 'KeikoThrow' })
