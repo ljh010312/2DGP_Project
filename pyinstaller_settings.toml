@@ -1,0 +1,15 @@
+# 메인 파일 이름을 지정하세요.
+main_file = 'main.py'
+
+# 데이타 파일들을 지정하세요.
+data_files = [
+    'ball.png', 'item.png', 'keiko.png',
+    'miyuki.png', 'Court_India.png', 'Court_Japan.png',
+    'Court_kenya.png', 'shadow.png'
+]
+
+# 데이타가 들어있는 폴더들을 지정하세요.
+data_folders = [
+
+]
+
