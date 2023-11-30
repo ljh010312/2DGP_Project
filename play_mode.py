@@ -69,9 +69,10 @@ def init():
     # game_world.add_object(big_ball_potion, 1)
     # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    miyuki = Miyuki()
-    game_world.add_object(miyuki, 2)
-    game_world.add_collision_pair('miyuki:ball', miyuki, None)
+    for _ in range(3):
+        miyuki = Miyuki()
+        game_world.add_object(miyuki, 2)
+        game_world.add_collision_pair('miyuki:ball', miyuki, None)
 
 
 def update():

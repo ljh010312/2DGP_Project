@@ -458,12 +458,12 @@ class Keiko:
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
-            if not self.hold_ball and other.state == 'Stay':
+            if not self.hold_ball and other.is_bound:
                 other.x = self.x + self.h_dir * 15
                 other.y = self.y
                 other.state = 'Hold'
                 self.hold_ball = True
-            if other.state == 'Throw':
+            if other.state == 'Throw' and not other.is_bound:
                 #여기에 맞았을 때 추가
                 self.state_machine.handle_event(('HIT', 0))
                 other.direction += math.pi

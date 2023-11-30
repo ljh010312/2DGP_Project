@@ -147,7 +147,7 @@ class Miyuki:
 
     def handle_collision(self, group, other):
         if group == 'miyuki:ball':
-            if other.state == 'Stay' and not self.hold_ball:
+            if other.is_bound and not self.hold_ball:
                 self.hold_ball = True
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
