@@ -146,6 +146,8 @@ class Miyuki:
         pass
 
     def handle_collision(self, group, other):
+        if self.state == 'Out' or self.state == 'OutCount':
+            return
         if group == 'miyuki:ball':
             if other.is_bound and not self.hold_ball and not other.state == 'Hold':
                 self.hold_ball = True
