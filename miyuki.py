@@ -147,7 +147,7 @@ class Miyuki:
 
     def handle_collision(self, group, other):
         if group == 'miyuki:ball':
-            if other.is_bound and not self.hold_ball:
+            if other.is_bound and not self.hold_ball and not other.state == 'Hold':
                 self.hold_ball = True
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
@@ -172,6 +172,9 @@ class Miyuki:
         self.speed = RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+
+
+
 
     def move_to(self, r=0.5):
         self.state = 'Walk'
@@ -275,6 +278,20 @@ class Miyuki:
         else:
             game_world.remove_object(self)
 
+    def is_keiko_throw_ball(self):
+        if server.ball.state == 'KeikoThrow' and not server.ball.is_bound:
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
+
+    def flee_from_ball(self):
+        self.state = 'Walk'
+        self.dir = math.atan2(self.y - server.ball.y, self.x - server.ball.x)
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+        self.face_dir = -1
+        return BehaviorTree.RUNNING
+
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
         a2 = Action('Move to', self.move_to)
@@ -288,7 +305,14 @@ class Miyuki:
         c2 = Condition('코트 공이 있는지', self.is_court_in_ball)
         a4 = Action('공 위치로 설정', self.set_ball_location)
 
+
+
         root = SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
+
+        c6 = Condition('상대가 공을 던졌는지', self.is_keiko_throw_ball)
+        a9 = Action('공의 반대쪽으로 이동', self.flee_from_ball)
+
+        root = SEQ_flee_from_ball = Sequence('flee from ball', c6, a9)
 
         c3 = Condition('공을 잡고 있는지', self.is_hold_ball)
         a5 = Action('기 모으기', self.charge_power)
@@ -296,7 +320,7 @@ class Miyuki:
 
         root = SEQ_throw_ball = Sequence('공 던지기', c3, a5, a6)
 
-        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_ball_loc_move, SEQ_throw_ball,
+        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_flee_from_ball,SEQ_ball_loc_move, SEQ_throw_ball,
                                                        SEQ_wander)
         root = SEL_flee_or_throw = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
 
@@ -311,5 +335,7 @@ class Miyuki:
         root = SEL_hit_and_out = Selector('out or hit', SEQ_out, SEQ_hit_ball)
 
         root = SEL_hit_or_move = Selector('hit or move', SEL_hit_and_out, SEL_flee_or_throw)
+
+
 
         self.bt = BehaviorTree(root)
