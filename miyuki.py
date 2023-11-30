@@ -72,6 +72,16 @@ hit_motion = (
     Frame(643, 381, 98, 45)
 )
 
+catch_motion = (
+    Frame(18, 1950, 43, 81),
+    Frame(18, 1950, 43, 81),
+    Frame(70, 1950, 55, 79),
+    Frame(70, 1950, 55, 79),
+    Frame(134, 1950, 43, 83),
+    Frame(134, 1950, 43, 83),
+    Frame(134, 1950, 43, 83),
+    Frame(134, 1950, 43, 83)
+)
 
 class Miyuki:
     image = None
@@ -80,7 +90,7 @@ class Miyuki:
         if Miyuki.image == None:
             Miyuki.image = load_image('miyuki.png')
 
-    def __init__(self, x=None, y=None):
+    def __init__(self, x=None, y=None, catch_percentage= 50):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -94,6 +104,7 @@ class Miyuki:
         self.hold_ball = False
         self.ball = None
         self.power = 0
+        self.catch_percentage = catch_percentage
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
@@ -140,6 +151,13 @@ class Miyuki:
                                            hit_motion[7].h, 0, 'h', self.x, self.y,
                                            hit_motion[7].w,
                                            hit_motion[7].h)
+        elif self.state == 'CatchMotion' or self.state == 'Catch':
+            self.image.clip_composite_draw(catch_motion[int(self.frame)].x, catch_motion[int(self.frame)].y,
+                                           catch_motion[int(self.frame)].w,
+                                           catch_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
+                                           catch_motion[int(self.frame)].w,
+                                           catch_motion[int(self.frame)].h)
+
         draw_rectangle(*self.get_bb())
 
     def handle_event(self, event):
@@ -155,8 +173,15 @@ class Miyuki:
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
             elif other.state == 'KeikoThrow' and not other.is_bound:
-                self.state = 'Hit'
-                other.direction += math.pi
+                if self.can_catch():
+                    self.state = 'Catch'
+                    self.hold_ball = True
+                    other.state = 'Hold'
+                    other.x = self.x + self.face_dir * 15
+                    other.y = self.y
+                else:
+                    self.state = 'Hit'
+                    other.direction += math.pi
 
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -294,6 +319,33 @@ class Miyuki:
         self.face_dir = -1
         return BehaviorTree.RUNNING
 
+    def can_catch(self):
+        random_num = random.randint(1, 100)
+        if random_num < self.catch_percentage:
+            return True
+        else:
+            return False
+
+    def is_catch(self):
+        if self.state == 'Catch':
+            self.frame = 0
+            return BehaviorTree.SUCCESS
+        elif self.state == 'CatchMotion':
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
+
+    def catch_motion(self):
+        if self.state == 'Catch':
+            self.state = 'CatchMotion'
+        if self.frame < 7.9:
+            server.ball.x = self.x - 15
+            server.ball.y = self.y
+            return BehaviorTree.RUNNING
+        else:
+            self.state = 'Walk'
+            return BehaviorTree.SUCCESS
+
+
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)
         a2 = Action('Move to', self.move_to)
@@ -334,10 +386,13 @@ class Miyuki:
         a8 = Action('아웃 카운트', self.out_count)
         root = SEQ_out = Sequence('아웃카운트 후 미유키 삭제', c5, a8)
 
-        root = SEL_hit_and_out = Selector('out or hit', SEQ_out, SEQ_hit_ball)
+        c7 = Condition("공을 잡았는지", self.is_catch)
+        a10 = Action("공 잡는 모션", self.catch_motion)
+        root = SEQ_catch = Sequence('Catch ball', c7, a10)
 
-        root = SEL_hit_or_move = Selector('hit or move', SEL_hit_and_out, SEL_flee_or_throw)
+        root = SEL_hit_or_out = Selector('catch or out or hit', SEQ_catch, SEQ_out, SEQ_hit_ball)
 
+        root = SEL_hit_or_move = Selector('hit or move', SEL_hit_or_out, SEL_flee_or_throw)
 
 
         self.bt = BehaviorTree(root)
