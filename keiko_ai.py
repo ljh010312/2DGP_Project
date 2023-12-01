@@ -351,11 +351,19 @@ class Keiko_AI:
             self.x -= server.ball.power / 10 * game_framework.frame_time
             server.ball.x = self.x + 15
             server.ball.y = self.y
+            self.opp_not_hold()
             return BehaviorTree.RUNNING
         else:
             self.state = 'Walk'
+            self.opp_not_hold()
             return BehaviorTree.SUCCESS
 
+
+    def opp_not_hold(self):
+        for layer in game_world.objects:
+            for o in layer:
+                if isinstance(o,miyuki.Miyuki):
+                    o.hold_ball = False
 
     def build_behavior_tree(self):
         a1 = Action('Set random location', self.set_random_location)

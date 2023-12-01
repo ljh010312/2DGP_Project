@@ -63,12 +63,12 @@ def init():
     # game_world.add_object(big_ball_potion, 1)
     # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    miyuki_ai = [Miyuki() for _ in range(3)]
+    miyuki_ai = [Miyuki(catch_percentage=100) for _ in range(3)]
     for m in miyuki_ai:
         game_world.add_object(m, 2)
         game_world.add_collision_pair('miyuki:ball', m, None)
 
-    keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
+    keiko_ai = [Keiko_AI(status_mode.state[0], 100, status_mode.state[2]) for _ in range(2)]
     for k in keiko_ai:
         game_world.add_object(k, 2)
         game_world.add_collision_pair('keiko:ball', k, None)
