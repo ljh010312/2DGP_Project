@@ -234,7 +234,6 @@ class Charging:
     def exit(keiko, e):
         keiko.charging = False
         keiko.power = physical.kmph_to_pps(keiko.power)
-        print(keiko.power)
 
     @staticmethod
     def do(keiko):
@@ -515,6 +514,7 @@ class Keiko:
         self.item = 'ball'
 
     def update(self):
+
         self.state_machine.update()
         self.x = clamp(50, self.x, 480)
         self.y = clamp(125, self.y, 435)
@@ -532,9 +532,8 @@ class Keiko:
         if event.button == SDL_BUTTON_LEFT:
             if self.hold_ball:
                 self.state_machine.handle_event(('INPUT', event))
-        if event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
             if not self.hold_ball:
-                print('호잇')
                 self.state_machine.handle_event(('INPUT', event))
         else:
             self.state_machine.handle_event(('INPUT', event))
@@ -550,10 +549,11 @@ class Keiko:
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
-            if not self.hold_ball and other.is_bound:
+            if not self.hold_ball and other.is_bound and not other.state == 'Hold':
                 other.x = self.x + self.h_dir * 15
                 other.y = self.y
                 other.state = 'Hold'
+                print('?')
                 self.hold_ball = True
             if other.state == 'Throw' and not other.is_bound:
                 #여기에 맞았을 때 추가
