@@ -141,6 +141,7 @@ class Out:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - 10, 91 / keiko.shrink, 15)
         keiko.image.clip_draw(650, 334, 91, 35, keiko.x, keiko.y, 91 / keiko.shrink, 35 / keiko.shrink)
 
 
@@ -156,11 +157,14 @@ class Hit_motion:
     @staticmethod
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        keiko.x -= RUN_SPEED_PPS * game_framework.frame_time
+        keiko.y -= (RUN_SPEED_PPS / 2) * game_framework.frame_time
         if keiko.frame > 7.5:
             keiko.state_machine.handle_event(('OUT', 0))
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - hit_motion[int(keiko.frame)].h / 2, hit_motion[int(keiko.frame)].w / keiko.shrink, 15)
         keiko.image.clip_draw(hit_motion[int(keiko.frame)].x, hit_motion[int(keiko.frame)].y,
                               hit_motion[int(keiko.frame)].w,
                               hit_motion[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -188,6 +192,7 @@ class Charging:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - throw_motion[0].h / 2, throw_motion[0].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(throw_motion[0].x, throw_motion[0].y,
                                   throw_motion[0].w,
@@ -231,6 +236,7 @@ class Throw_Ball:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - throw_motion[int(keiko.frame)].h / 2, throw_motion[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(throw_motion[int(keiko.frame)].x, throw_motion[int(keiko.frame)].y,
                                   throw_motion[int(keiko.frame)].w,
@@ -265,6 +271,7 @@ class Up_Down:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - move_lr[int(keiko.frame)].h / 2, move_lr[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir > 0:
             keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -300,6 +307,7 @@ class Run:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - move_lr[int(keiko.frame)].h / 2, move_lr[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.h_dir > 0:
             keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -343,6 +351,7 @@ class Dia_Run:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - move_lr[int(keiko.frame)].h / 2, move_lr[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.h_dir > 0:
             keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -372,6 +381,7 @@ class Idle:
 
     @staticmethod
     def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - idle_state[int(keiko.frame)].h / 2, idle_state[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(idle_state[int(keiko.frame)].x, idle_state[int(keiko.frame)].y,
                                   idle_state[int(keiko.frame)].w,
@@ -436,6 +446,7 @@ class Keiko:
         self.v_dir = 0
         self.face_dir = 1
         self.image = load_image('keiko.png')
+        self.shadow_image = load_image('shadow.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.hold_ball = False
