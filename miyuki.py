@@ -115,7 +115,6 @@ class Miyuki:
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
 
     def update(self):
-        print(self.speed)
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.bt.run()
         # self.face_dir = -1 if math.cos(self.dir) < 0 else 1

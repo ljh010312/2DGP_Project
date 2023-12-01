@@ -1,4 +1,5 @@
 import random
+import tomllib
 
 from pico2d import *
 
@@ -37,10 +38,17 @@ def init():
     global balls
     global miyuki_ai
 
-    court = Court()
-    game_world.add_object(court, 0)
+    with open('resource/round_one_data.toml', 'rb') as f:
+        court_data_list = tomllib.load(f)['court']
+        for c in court_data_list:
+            court = Court()
+            court.__dict__.update(c)
+            game_world.add_object(court, 0)
 
-    keiko = Keiko(status_mode.state[0], status_mode.state[1])
+
+
+
+    keiko = Keiko(status_mode.state[0], status_mode.state[1], status_mode.state[2])
     game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
     # game_world.add_collision_pair('keiko:power_up_item', keiko, None)
@@ -64,18 +72,16 @@ def init():
     # game_world.add_object(big_ball_potion, 1)
     # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    with open('resource/round_one_miyuki_data.json', 'rb') as f:
-        miyuki_data_list = json.load(f)
+    with open('resource/round_one_data.toml', 'rb') as f:
+        miyuki_data_list = tomllib.load(f)['miyuki']
         for m in miyuki_data_list:
             m["speed"] = physical.kmph_to_pps(m["speed"])
             miyuki = Miyuki()
             miyuki.__dict__.update(m)
             game_world.add_object(miyuki, 2)
             game_world.add_collision_pair('miyuki:ball', miyuki, None)
-    # miyuki_ai = [Miyuki() for _ in range(3)]
-    # for m in miyuki_ai:
-    #     game_world.add_object(m, 2)
-    #     game_world.add_collision_pair('miyuki:ball', m, None)
+
+
 
     keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
     for k in keiko_ai:

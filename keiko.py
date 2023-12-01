@@ -492,7 +492,7 @@ class StateMachine:
 
 
 class Keiko:
-    def __init__(self, speed = 0, power = 0, catch_percentage = 100):
+    def __init__(self, speed = 0, power = 0, catch_percentage = 0):
         self.x, self.y = 100, 100
         self.frame = 0
         self.h_dir = 0
@@ -505,7 +505,7 @@ class Keiko:
         self.hold_ball = False
         self.charging = False
         self.catch = False
-        self.catch_percentage = 60 + catch_percentage
+        self.catch_percentage = 50 + catch_percentage
         self.max_power = 80 + power
         self.speed = RUN_SPEED_PPS + physical.kmph_to_pps(speed)
         self.power = 0
