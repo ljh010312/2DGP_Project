@@ -53,9 +53,10 @@ def remove_object(o):
 
 
 def clear():
-    for layer in objects:
-        layer.clear()
+    global objects, collision_pairs
 
+    objects = [[] for _ in range(4)]
+    collision_pairs = {}
 
 
 # fill here

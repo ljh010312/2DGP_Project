@@ -107,7 +107,7 @@ class Keiko_AI:
         self.hold_ball = False
         self.ball = None
         self.power = 0
-        self.max_power = power + 50
+        self.max_power = power + 60
         self.catch_percentage = 50 + catch_percentage
 
     def get_bb(self):
@@ -250,7 +250,7 @@ class Keiko_AI:
         self.state = 'Charge'
         server.ball.x = self.x - 20
         server.ball.y = self.y + 30
-        if self.power > 60.0:
+        if self.power > self.max_power:
             self.power = physical.kmph_to_pps(self.power)
             return BehaviorTree.SUCCESS
         else:

@@ -31,6 +31,7 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_mode(status_mode)
+
         elif event.type == SDL_MOUSEBUTTONDOWN:
             for i in range(3):
                 if 250 * (i + 1) - 100 < event.x < 250 * (i + 1) + 100 and 170 < 800 - 1 - event.y < 330:

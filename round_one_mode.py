@@ -85,6 +85,7 @@ def draw():
     update_canvas()
 
 def finish():
+    server.ball = None
     game_world.clear()
 
 

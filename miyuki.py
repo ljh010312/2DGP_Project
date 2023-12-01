@@ -10,7 +10,6 @@ import physical
 import server
 from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-import round_one_mode
 
 PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 40 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
