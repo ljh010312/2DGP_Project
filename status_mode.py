@@ -2,7 +2,7 @@ from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN
 
 import game_framework
-import play_mode
+import round_one_mode
 import title_mode
 from keiko_ai import catch_motion, throw_motion, move_lr
 from physical import FRAMES_PER_ACTION, ACTION_PER_TIME
@@ -40,7 +40,7 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:
             if 870 < event.x < 1024 and 0 < 800 - 1-event.y < 50:
-                game_framework.change_mode(play_mode)
+                game_framework.change_mode(round_one_mode)
             if 30 < event.x < 230 and 0 < 800 - 1- event.y < 50:
                 game_framework.change_mode(title_mode)
             for i in range(3):
@@ -56,7 +56,7 @@ def handle_events():
                         state[i] -= 1
                         count += 1
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.change_mode(play_mode)
+            game_framework.change_mode(round_one_mode)
 
 
 def update():

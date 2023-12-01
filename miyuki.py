@@ -10,7 +10,7 @@ import physical
 import server
 from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-import play_mode
+import round_one_mode
 
 PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 40 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
@@ -95,7 +95,7 @@ class Miyuki:
             Miyuki.image = load_image('resource/miyuki.png')
             Miyuki.shadow_image = load_image('resource/shadow.png')
 
-    def __init__(self, x=None, y=None, catch_percentage= 10):
+    def __init__(self, x=None, y=None, catch_percentage= 60):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()

@@ -2,7 +2,7 @@ from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
 
 import game_framework
-import play_mode
+import round_one_mode
 import status_mode
 
 

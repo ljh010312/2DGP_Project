@@ -66,7 +66,7 @@ def init():
         game_world.add_object(m, 2)
         game_world.add_collision_pair('miyuki:ball', m, None)
 
-    keiko_ai = [Keiko_AI() for _ in range(3)]
+    keiko_ai = [Keiko_AI() for _ in range(2)]
     for k in keiko_ai:
         game_world.add_object(k, 2)
         game_world.add_collision_pair('keiko:ball', k, None)
