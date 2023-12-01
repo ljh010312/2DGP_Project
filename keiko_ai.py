@@ -74,14 +74,14 @@ hit_motion = (
 )
 
 catch_motion = (
-    Frame(18, 1950, 43, 81),
-    Frame(18, 1950, 43, 81),
-    Frame(70, 1950, 55, 79),
-    Frame(70, 1950, 55, 79),
-    Frame(134, 1950, 43, 83),
-    Frame(134, 1950, 43, 83),
-    Frame(134, 1950, 43, 83),
-    Frame(134, 1950, 43, 83)
+    Frame(15, 1814, 36, 73),
+    Frame(15, 1814, 36, 73),
+    Frame(64, 1814, 52, 72),
+    Frame(64, 1814, 52, 72),
+    Frame(127, 1814, 41, 69),
+    Frame(127, 1814, 41, 69),
+    Frame(127, 1814, 41, 69),
+    Frame(127, 1814, 41, 69),
 )
 
 class Keiko_AI:
@@ -93,7 +93,7 @@ class Keiko_AI:
             Keiko_AI.image = load_image('keiko.png')
             Keiko_AI.shadow_image = load_image('shadow.png')
 
-    def __init__(self, x=None, y=None, catch_percentage= 10):
+    def __init__(self, x=None, y=None, catch_percentage= 100):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -149,30 +149,25 @@ class Keiko_AI:
                                            throw_motion[int(self.frame)].w,
                                            throw_motion[int(self.frame)].h)
         elif self.state == 'HitMotion' or self.state == 'Hit':
-            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 15,
-                                        hit_motion[int(self.frame)].w, 15)
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - hit_motion[int(self.frame)].h / 2,
+                                         hit_motion[int(self.frame)].w, 15)
             self.image.clip_draw(hit_motion[int(self.frame)].x, hit_motion[int(self.frame)].y,
-                                           hit_motion[int(self.frame)].w,
-                                           hit_motion[int(self.frame)].h, self.x, self.y,
-                                           hit_motion[int(self.frame)].w,
-                                           hit_motion[int(self.frame)].h)
+                                  hit_motion[int(self.frame)].w,
+                                  hit_motion[int(self.frame)].h, self.x, self.y,
+                                  hit_motion[int(self.frame)].w,
+                                  hit_motion[int(self.frame)].h )
         elif self.state == 'OutCount' or self.state == 'Out':
-            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 15,
-                                        hit_motion[7].w, 15)
-            self.image.clip_draw(hit_motion[7].x, hit_motion[7].y,
-                                           hit_motion[7].w,
-                                           hit_motion[7].h, self.x, self.y,
-                                           hit_motion[7].w,
-                                           hit_motion[7].h)
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 10, 91 , 15)
+            self.image.clip_draw(650, 334, 91, 35, self.x, self.y, 91 , 35 )
         elif self.state == 'CatchMotion' or self.state == 'Catch':
             pass
-            # self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - catch_motion[int(self.frame)].h / 2,
-            #                             catch_motion[int(self.frame)].w, 15)
-            # self.image.clip_composite_draw(catch_motion[int(self.frame)].x, catch_motion[int(self.frame)].y,
-            #                                catch_motion[int(self.frame)].w,
-            #                                catch_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
-            #                                catch_motion[int(self.frame)].w,
-            #                                catch_motion[int(self.frame)].h)
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - catch_motion[int(self.frame)].h / 2,
+                                        catch_motion[int(self.frame)].w, 15)
+            self.image.clip_draw(catch_motion[int(self.frame)].x, catch_motion[int(self.frame)].y,
+                                           catch_motion[int(self.frame)].w,
+                                           catch_motion[int(self.frame)].h, self.x, self.y,
+                                           catch_motion[int(self.frame)].w,
+                                           catch_motion[int(self.frame)].h)
 
         draw_rectangle(*self.get_bb())
 
@@ -290,7 +285,7 @@ class Keiko_AI:
         if self.state == 'Hit':
             self.state = 'HitMotion'
         if self.frame < 7.9:
-            self.x += RUN_SPEED_PPS * game_framework.frame_time
+            self.x -= RUN_SPEED_PPS * game_framework.frame_time
             self.y -= (RUN_SPEED_PPS / 2) * game_framework.frame_time
             return BehaviorTree.RUNNING
         else:
@@ -348,7 +343,7 @@ class Keiko_AI:
             self.state = 'CatchMotion'
         if self.frame < 7.9:
             self.x -= server.ball.power / 10 * game_framework.frame_time
-            server.ball.x = self.x - 15
+            server.ball.x = self.x + 15
             server.ball.y = self.y
             return BehaviorTree.RUNNING
         else:
