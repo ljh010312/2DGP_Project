@@ -4,12 +4,13 @@ import random
 import math
 import game_framework
 import game_world
+import physical
 import server
 from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 import play_mode
 
-PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 40 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
@@ -246,10 +247,11 @@ class Miyuki:
         self.state = 'Charge'
         server.ball.x = self.x + 20
         server.ball.y = self.y + 30
-        if self.power > 3.0:
+        if self.power > 60.0:
+            self.power = physical.kmph_to_pps(self.power)
             return BehaviorTree.SUCCESS
         else:
-            self.power += 0.01
+            self.power += 0.2
             return BehaviorTree.RUNNING
 
     def throw_ball(self):
@@ -257,7 +259,7 @@ class Miyuki:
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": play_mode.keiko.x, "target_y": play_mode.keiko.y,
                                          "is_bound": False,
-                                         "power": self.power * 5, "state": 'Throw'})
+                                         "power": self.power, "state": 'Throw'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
             self.frame = 0
@@ -338,6 +340,7 @@ class Miyuki:
         if self.state == 'Catch':
             self.state = 'CatchMotion'
         if self.frame < 7.9:
+            self.x += server.ball.power / 10 * game_framework.frame_time
             server.ball.x = self.x - 15
             server.ball.y = self.y
             return BehaviorTree.RUNNING

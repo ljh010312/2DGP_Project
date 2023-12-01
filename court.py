@@ -1,6 +1,6 @@
 from pico2d import load_image
 
-
+# 코트는 가로 22m 세로 8m
 class Court:
     def __init__(self):
         self.image = load_image('Court_Japan.png')

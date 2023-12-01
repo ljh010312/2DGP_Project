@@ -1,4 +1,3 @@
-# 이것은 각 상태들을 객체로 구현한 것임.
 import math
 
 from pico2d import load_image, draw_rectangle, clamp, get_time
@@ -8,6 +7,7 @@ from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, 
 import game_framework
 import game_world
 import server
+import physical
 from ball import Ball, Big_Ball
 
 
@@ -63,11 +63,12 @@ hit_motion = (
     Frame(544, 331, 87, 36)
 )
 
-PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -166,6 +167,7 @@ class Hit_motion:
                               hit_motion[int(keiko.frame)].w / keiko.shrink,
                               hit_motion[int(keiko.frame)].h / keiko.shrink)
 
+
 class Charging:
     @staticmethod
     def enter(keiko, e):
@@ -176,12 +178,13 @@ class Charging:
     @staticmethod
     def exit(keiko, e):
         keiko.charging = False
+        keiko.power = physical.kmph_to_pps(keiko.power)
+        print(keiko.power)
 
     @staticmethod
     def do(keiko):
-        keiko.power += 0.01
-        keiko.power = clamp(1, keiko.power, 10)
-
+        keiko.power += 0.2
+        keiko.power = clamp(1, keiko.power, 80)
 
     @staticmethod
     def draw(keiko):
@@ -208,7 +211,7 @@ class Throw_Ball:
         if keiko.item == 'ball':
             server.ball.__dict__.update({"x": keiko.x - 20, "y": keiko.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,
-                                         "power": keiko.power * 5, "state": 'KeikoThrow'})
+                                         "power": keiko.power, "state": 'KeikoThrow'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
         elif keiko.item == 'big_ball':
@@ -259,7 +262,6 @@ class Up_Down:
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
-        keiko.y = clamp(125, keiko.y, 435)
 
     @staticmethod
     def draw(keiko):
@@ -295,7 +297,6 @@ class Run:
 
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
 
-        keiko.x = clamp(110, keiko.x, 480)
 
     @staticmethod
     def draw(keiko):
@@ -338,8 +339,7 @@ class Dia_Run:
         keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
         keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
 
-        keiko.x = clamp(110, keiko.x, 480)
-        keiko.y = clamp(125, keiko.y, 435)
+
 
     @staticmethod
     def draw(keiko):
@@ -447,6 +447,8 @@ class Keiko:
 
     def update(self):
         self.state_machine.update()
+        self.x = clamp(50, self.x, 480)
+        self.y = clamp(125, self.y, 435)
         if self.shrink == 2:
             if get_time() - self.shrink_start_time > 5.0:
                 self.shrink = 1
@@ -467,7 +469,8 @@ class Keiko:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+
+        # draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 15 / self.shrink, self.y - 40 / self.shrink, self.x + 15 / self.shrink, self.y + 40 / self.shrink

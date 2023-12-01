@@ -2,7 +2,7 @@ from pico2d import *
 import game_world
 import game_framework
 
-PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
 GRAVITY_SPEED_KMPH = -10.0  # Km / Hour
 GRAVITY_SPEED_MPM = (GRAVITY_SPEED_KMPH * 1000.0 / 60.0)
 GRAVITY_SPEED_MPS = (GRAVITY_SPEED_MPM / 60.0)
@@ -43,9 +43,9 @@ class Ball:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.x += self.power * 30 * math.cos(self.direction) * game_framework.frame_time
+        self.x += self.power * math.cos(self.direction) * game_framework.frame_time
         self.z += self.z_speed * game_framework.frame_time
-        self.y += self.power * 30 * math.sin(
+        self.y += self.power * math.sin(
             self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
         self.shadow_y = self.y - self.z - 10
         if self.z > 0.0:
@@ -76,7 +76,7 @@ class Ball:
         self.z_speed = abs(self.z_speed) * bound_decay
         self.power = self.power * bound_decay
         if abs(self.z_speed) < set_stop: self.z_speed = 0.0
-        if self.power < set_stop: self.power = 0.0
+        if self.power < 10: self.power = 0.0
 
     def get_bb(self):
         return self.x - 10, self.y - 10, self.x + 10, self.y + 10
