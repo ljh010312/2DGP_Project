@@ -213,7 +213,7 @@ class Miyuki:
 
 
 
-    def move_to(self, r=0.5):
+    def move_to(self, r=2):
         self.state = 'Walk'
         self.move_slightly_to(self.tx, self.ty)
         if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):

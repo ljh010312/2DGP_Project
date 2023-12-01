@@ -1,8 +1,9 @@
 import math
+import random
 
 from pico2d import load_image, draw_rectangle, clamp, get_time
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s, SDL_MOUSEBUTTONDOWN, \
-    SDL_BUTTON_LEFT, SDL_MOUSEBUTTONUP
+    SDL_BUTTON_LEFT, SDL_MOUSEBUTTONUP, SDLK_SPACE
 
 import game_framework
 import game_world
@@ -63,6 +64,19 @@ hit_motion = (
     Frame(544, 331, 87, 36)
 )
 
+
+catch_motion = (
+    Frame(15, 1814, 36, 73),
+    Frame(15, 1814, 36, 73),
+    Frame(64, 1814, 52, 72),
+    Frame(64, 1814, 52, 72),
+    Frame(127, 1814, 41, 69),
+    Frame(127, 1814, 41, 69),
+    Frame(127, 1814, 41, 69),
+    Frame(127, 1814, 41, 69),
+)
+
+
 PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -87,6 +101,8 @@ def out(e):
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
 
+def space_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
 def right_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_d
@@ -170,6 +186,41 @@ class Hit_motion:
                               hit_motion[int(keiko.frame)].h, keiko.x, keiko.y,
                               hit_motion[int(keiko.frame)].w / keiko.shrink,
                               hit_motion[int(keiko.frame)].h / keiko.shrink)
+
+
+class Catch:
+    @staticmethod
+    def enter(keiko, e):
+        keiko.frame = 0
+        keiko.face_dir = 1
+        keiko.wait_time = get_time()
+        keiko.catch = True
+    @staticmethod
+    def exit(keiko, e):
+        keiko.catch = False
+    @staticmethod
+    def do(keiko):
+        keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        if get_time() - keiko.wait_time > 0.4:
+            keiko.state_machine.handle_event(('TIME_OUT', 0))
+
+    @staticmethod
+    def draw(keiko):
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - catch_motion[int(keiko.frame)].h / 2,
+                                     catch_motion[int(keiko.frame)].w / keiko.shrink, 15)
+        if keiko.face_dir == 1:
+            keiko.image.clip_draw(catch_motion[int(keiko.frame)].x, catch_motion[int(keiko.frame)].y,
+                                  catch_motion[int(keiko.frame)].w,
+                                  catch_motion[int(keiko.frame)].h, keiko.x, keiko.y,
+                                  catch_motion[int(keiko.frame)].w / keiko.shrink,
+                                  catch_motion[int(keiko.frame)].h / keiko.shrink)
+        else:
+            keiko.image.clip_composite_draw(catch_motion[int(keiko.frame)].x, catch_motion[int(keiko.frame)].y,
+                                            catch_motion[int(keiko.frame)].w,
+                                            catch_motion[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y,
+                                            catch_motion[int(keiko.frame)].w / keiko.shrink,
+                                            catch_motion[int(keiko.frame)].h / keiko.shrink)
+
 
 
 class Charging:
@@ -402,7 +453,7 @@ class StateMachine:
         self.cur_state = Idle
         self.table = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
-                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging, hit_by_the_ball: Hit_motion},
+                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging, hit_by_the_ball: Hit_motion, space_down: Catch},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Dia_Run,
                   down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run, hit_by_the_ball: Hit_motion},
             Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle, right_down: Dia_Run,
@@ -416,7 +467,10 @@ class StateMachine:
                        down_down: Up_Down,
                        up_up: Up_Down, down_up: Up_Down, left_mouse_up: Throw_Ball, hit_by_the_ball: Hit_motion},
             Hit_motion: {out: Out},
-            Out: {}
+            Out: {},
+            Catch: {time_out: Idle, right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down,
+                         down_down: Up_Down,
+                         up_up: Up_Down, down_up: Up_Down, hit_by_the_ball:Hit_motion}
         }
 
     def start(self):
@@ -439,7 +493,7 @@ class StateMachine:
 
 
 class Keiko:
-    def __init__(self, speed = 0, power = 0):
+    def __init__(self, speed = 0, power = 0, catch_percentage = 0):
         self.x, self.y = 100, 100
         self.frame = 0
         self.h_dir = 0
@@ -451,6 +505,8 @@ class Keiko:
         self.state_machine.start()
         self.hold_ball = False
         self.charging = False
+        self.catch = False
+        self.catch_percentage = 60 + catch_percentage
         self.max_power = 80 + power
         self.speed = RUN_SPEED_PPS + physical.kmph_to_pps(speed)
         self.power = 0
@@ -476,6 +532,10 @@ class Keiko:
         if event.button == SDL_BUTTON_LEFT:
             if self.hold_ball:
                 self.state_machine.handle_event(('INPUT', event))
+        if event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            if not self.hold_ball:
+                print('호잇')
+                self.state_machine.handle_event(('INPUT', event))
         else:
             self.state_machine.handle_event(('INPUT', event))
         pass
@@ -497,8 +557,15 @@ class Keiko:
                 self.hold_ball = True
             if other.state == 'Throw' and not other.is_bound:
                 #여기에 맞았을 때 추가
-                self.state_machine.handle_event(('HIT', 0))
-                other.direction += math.pi
+                if self.catch:
+                    if random.randint(1, 100) < self.catch_percentage:
+                        other.x = self.x + 15
+                        other.y = self.y
+                        other.power = 0
+                        other.state = 'Hold'
+                    else:
+                        self.state_machine.handle_event(('HIT', 0))
+                        other.direction += math.pi
 
         elif group == 'keiko:power_up_item':
             self.power = 10

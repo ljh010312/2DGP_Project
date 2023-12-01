@@ -48,14 +48,13 @@ class Ball:
         self.y += self.power * math.sin(
             self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
         self.shadow_y = self.y - self.z - 10
-        if self.z > 0.0:
-            self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
+        self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
         self.shadow_scale = 1 - (self.z / 50)
         if self.z < 0:
             self.bound()
         if (self.state == 'KeikoThrow' or self.state == 'Throw') and self.power == 0:
             self.state = 'Stay'
-
+        print(self.state)
         if self.x < 25:
             self.direction += math.pi
 
