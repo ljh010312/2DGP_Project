@@ -492,7 +492,7 @@ class StateMachine:
 
 
 class Keiko:
-    def __init__(self, speed = 0, power = 0, catch_percentage = 0):
+    def __init__(self, speed = 0, power = 0, catch_percentage = 100):
         self.x, self.y = 100, 100
         self.frame = 0
         self.h_dir = 0
@@ -561,8 +561,9 @@ class Keiko:
                     if random.randint(1, 100) < self.catch_percentage:
                         other.x = self.x + 15
                         other.y = self.y
+                        other.z = 0
                         other.power = 0
-                        other.state = 'Hold'
+                        other.state = 'Stay'
                     else:
                         self.state_machine.handle_event(('HIT', 0))
                         other.direction += math.pi
