@@ -171,6 +171,7 @@ class Charging:
     def enter(keiko, e):
         keiko.frame = 0
         keiko.charging = True
+        keiko.face_dir = 1 if keiko.x - e[1].x < 0 else -1
 
     @staticmethod
     def exit(keiko, e):
@@ -181,12 +182,20 @@ class Charging:
         keiko.power += 0.01
         keiko.power = clamp(1, keiko.power, 10)
 
+
     @staticmethod
     def draw(keiko):
-        keiko.image.clip_draw(throw_motion[0].x, throw_motion[0].y,
-                              throw_motion[0].w,
-                              throw_motion[0].h, keiko.x, keiko.y, throw_motion[0].w / keiko.shrink,
-                              throw_motion[0].h / keiko.shrink)
+        if keiko.face_dir == 1:
+            keiko.image.clip_draw(throw_motion[0].x, throw_motion[0].y,
+                                  throw_motion[0].w,
+                                  throw_motion[0].h, keiko.x, keiko.y, throw_motion[0].w / keiko.shrink,
+                                  throw_motion[0].h / keiko.shrink)
+        else:
+            keiko.image.clip_composite_draw(throw_motion[0].x, throw_motion[0].y,
+                                  throw_motion[0].w,
+                                  throw_motion[0].h, 0, 'h',  keiko.x, keiko.y, throw_motion[0].w / keiko.shrink,
+                                  throw_motion[0].h / keiko.shrink)
+
 
 
 class Throw_Ball:
@@ -195,7 +204,7 @@ class Throw_Ball:
         keiko.frame = 0
         keiko.hold_ball = False
         keiko.wait_time = get_time()
-
+        keiko.face_dir = 1 if keiko.x - e[1].x < 0 else -1
         if keiko.item == 'ball':
             server.ball.__dict__.update({"x": keiko.x - 20, "y": keiko.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,
@@ -219,11 +228,18 @@ class Throw_Ball:
 
     @staticmethod
     def draw(keiko):
-        keiko.image.clip_draw(throw_motion[int(keiko.frame)].x, throw_motion[int(keiko.frame)].y,
-                              throw_motion[int(keiko.frame)].w,
-                              throw_motion[int(keiko.frame)].h, keiko.x, keiko.y,
-                              throw_motion[int(keiko.frame)].w / keiko.shrink,
-                              throw_motion[int(keiko.frame)].h / keiko.shrink)
+        if keiko.face_dir == 1:
+            keiko.image.clip_draw(throw_motion[int(keiko.frame)].x, throw_motion[int(keiko.frame)].y,
+                                  throw_motion[int(keiko.frame)].w,
+                                  throw_motion[int(keiko.frame)].h, keiko.x, keiko.y,
+                                  throw_motion[int(keiko.frame)].w / keiko.shrink,
+                                  throw_motion[int(keiko.frame)].h / keiko.shrink)
+        else:
+            keiko.image.clip_composite_draw(throw_motion[int(keiko.frame)].x, throw_motion[int(keiko.frame)].y,
+                                  throw_motion[int(keiko.frame)].w,
+                                  throw_motion[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y,
+                                  throw_motion[int(keiko.frame)].w / keiko.shrink,
+                                  throw_motion[int(keiko.frame)].h / keiko.shrink)
 
 
 class Up_Down:
@@ -435,7 +451,7 @@ class Keiko:
             if get_time() - self.shrink_start_time > 5.0:
                 self.shrink = 1
         if self.charging:
-            server.ball.x = self.x - 20
+            server.ball.x = self.x - self.face_dir *  20
             server.ball.y = self.y + 25
         elif self.hold_ball:
             server.ball.x = self.x + self.face_dir * 15
