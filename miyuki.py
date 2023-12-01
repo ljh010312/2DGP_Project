@@ -94,12 +94,12 @@ class Miyuki:
             Miyuki.image = load_image('resource/miyuki.png')
             Miyuki.shadow_image = load_image('resource/shadow.png')
 
-    def __init__(self, x=None, y=None, catch_percentage= 60):
+    def __init__(self, x=None, y=None, speed = 0, max_power = 0, catch_percentage= 60):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
         self.dir = 0.0
-        self.speed = 0.0
+        self.speed = speed
         self.tx, self.ty = 400, 150
         self.frame = 0
         self.state = 'Walk'
@@ -108,12 +108,14 @@ class Miyuki:
         self.hold_ball = False
         self.ball = None
         self.power = 0
+        self.max_power = max_power
         self.catch_percentage = catch_percentage
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
 
     def update(self):
+        print(self.speed)
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.bt.run()
         # self.face_dir = -1 if math.cos(self.dir) < 0 else 1
@@ -206,7 +208,6 @@ class Miyuki:
 
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
-        self.speed = RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
@@ -258,7 +259,7 @@ class Miyuki:
         self.state = 'Charge'
         server.ball.x = self.x + 20
         server.ball.y = self.y + 30
-        if self.power > 60.0:
+        if self.power > self.max_power:
             self.power = physical.kmph_to_pps(self.power)
             return BehaviorTree.SUCCESS
         else:
@@ -332,7 +333,6 @@ class Miyuki:
     def flee_from_ball(self):
         self.state = 'Walk'
         self.dir = math.atan2(self.y - server.ball.y, self.x - server.ball.x)
-        self.speed = RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
         self.face_dir = -1

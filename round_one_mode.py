@@ -3,6 +3,7 @@ import random
 from pico2d import *
 
 import game_framework
+import physical
 import select_round_mode
 import server
 import status_mode
@@ -46,7 +47,7 @@ def init():
     # game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
     # game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
 
-    server.ball = Ball(400, 300, 40, 400, 300, 0)
+    server.ball = Ball(480, 300, 40, 480, 300, 0)
     game_world.add_object(server.ball, 1)
     game_world.add_collision_pair('keiko:ball', None, server.ball)
     game_world.add_collision_pair('miyuki:ball', None, server.ball)
@@ -63,12 +64,20 @@ def init():
     # game_world.add_object(big_ball_potion, 1)
     # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    miyuki_ai = [Miyuki(catch_percentage=100) for _ in range(3)]
-    for m in miyuki_ai:
-        game_world.add_object(m, 2)
-        game_world.add_collision_pair('miyuki:ball', m, None)
+    with open('resource/round_one_miyuki_data.json', 'rb') as f:
+        miyuki_data_list = json.load(f)
+        for m in miyuki_data_list:
+            m["speed"] = physical.kmph_to_pps(m["speed"])
+            miyuki = Miyuki()
+            miyuki.__dict__.update(m)
+            game_world.add_object(miyuki, 2)
+            game_world.add_collision_pair('miyuki:ball', miyuki, None)
+    # miyuki_ai = [Miyuki() for _ in range(3)]
+    # for m in miyuki_ai:
+    #     game_world.add_object(m, 2)
+    #     game_world.add_collision_pair('miyuki:ball', m, None)
 
-    keiko_ai = [Keiko_AI(status_mode.state[0], 100, status_mode.state[2]) for _ in range(2)]
+    keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
     for k in keiko_ai:
         game_world.add_object(k, 2)
         game_world.add_collision_pair('keiko:ball', k, None)

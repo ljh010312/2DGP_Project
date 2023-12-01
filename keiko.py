@@ -509,6 +509,7 @@ class Keiko:
         self.max_power = 80 + power
         self.speed = RUN_SPEED_PPS + physical.kmph_to_pps(speed)
         self.power = 0
+
         self.shrink = 1
         self.shrink_start_time = 0
         self.item = 'ball'

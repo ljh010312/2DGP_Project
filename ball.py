@@ -46,7 +46,6 @@ class Ball:
 
         self.x += self.power * math.cos(self.direction) * game_framework.frame_time
         self.z += self.z_speed * game_framework.frame_time
-        print(self.state)
         self.y += self.power * math.sin(self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
         self.shadow_y = self.y - self.z - 10
         self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
