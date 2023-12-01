@@ -93,12 +93,12 @@ class Keiko_AI:
             Keiko_AI.image = load_image('resource/keiko.png')
             Keiko_AI.shadow_image = load_image('resource/shadow.png')
 
-    def __init__(self, x=None, y=None, catch_percentage= 100):
-        self.x = x if x else random.randint(400, 700)
-        self.y = y if y else random.randint(105, 330)
+    def __init__(self, speed = 0, power = 0,catch_percentage= 0):
+        self.x = random.randint(400, 700)
+        self.y = random.randint(105, 330)
         self.load_image()
         self.dir = 0.0
-        self.speed = 0.0
+        self.speed = RUN_SPEED_PPS + physical.kmph_to_pps(speed)
         self.tx, self.ty = 400, 150
         self.frame = 0
         self.state = 'Walk'
@@ -107,7 +107,8 @@ class Keiko_AI:
         self.hold_ball = False
         self.ball = None
         self.power = 0
-        self.catch_percentage = catch_percentage
+        self.max_power = power + 50
+        self.catch_percentage = 50 + catch_percentage
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
@@ -121,17 +122,17 @@ class Keiko_AI:
         if self.state == 'Walk':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - move_lr[int(self.frame)].h / 2,
                                          move_lr[int(self.frame)].w, 15)
-            if math.cos(self.dir) < 0 or self.face_dir == -1:
+            if math.cos(self.dir) > 0 or self.face_dir == 1:
+                self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
+                                     move_lr[int(self.frame)].w,
+                                     move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
+                                     move_lr[int(self.frame)].h)
+            else:
                 self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
                                                move_lr[int(self.frame)].w,
                                                move_lr[int(self.frame)].h, 0, 'h', self.x, self.y,
                                                move_lr[int(self.frame)].w,
                                                move_lr[int(self.frame)].h)
-            else:
-                self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
-                                     move_lr[int(self.frame)].w,
-                                     move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
-                                     move_lr[int(self.frame)].h)
         elif self.state == 'Charge':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - throw_motion[0].h / 2,
                                         throw_motion[0].w, 15)
@@ -201,7 +202,6 @@ class Keiko_AI:
 
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
-        self.speed = RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
@@ -223,9 +223,8 @@ class Keiko_AI:
             for o in layer:
                 if isinstance(o, miyuki.Miyuki):
                     if o.hold_ball:
-                        self.face_dir = -1
+                        self.face_dir = 1
                         return BehaviorTree.SUCCESS
-        self.face_dir = 0
         return BehaviorTree.FAIL
 
     def set_flee_random_location(self):  # 코트의 바깥쪽 좌표 구하기
@@ -325,7 +324,6 @@ class Keiko_AI:
     def flee_from_ball(self):
         self.state = 'Walk'
         self.dir = math.atan2(self.y - server.ball.y, self.x - server.ball.x)
-        self.speed = RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
         self.face_dir = 1

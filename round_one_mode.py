@@ -3,7 +3,9 @@ import random
 from pico2d import *
 
 import game_framework
+import select_round_mode
 import server
+import status_mode
 from big_ball_potion import Big_Ball_Potion
 from keiko import Keiko
 from court import Court
@@ -23,7 +25,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.quit()
+            game_framework.change_mode(select_round_mode)
         else:
             keiko.handle_event(event)
 
@@ -37,7 +39,7 @@ def init():
     court = Court()
     game_world.add_object(court, 0)
 
-    keiko = Keiko()
+    keiko = Keiko(status_mode.state[0], status_mode.state[1])
     game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
     # game_world.add_collision_pair('keiko:power_up_item', keiko, None)
@@ -66,7 +68,7 @@ def init():
         game_world.add_object(m, 2)
         game_world.add_collision_pair('miyuki:ball', m, None)
 
-    keiko_ai = [Keiko_AI() for _ in range(2)]
+    keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
     for k in keiko_ai:
         game_world.add_object(k, 2)
         game_world.add_collision_pair('keiko:ball', k, None)

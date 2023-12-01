@@ -188,7 +188,7 @@ class Charging:
     @staticmethod
     def do(keiko):
         keiko.power += 0.2
-        keiko.power = clamp(1, keiko.power, 80)
+        keiko.power = clamp(1, keiko.power, keiko.max_power)
 
     @staticmethod
     def draw(keiko):
@@ -267,7 +267,7 @@ class Up_Down:
     @staticmethod
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
+        keiko.y += keiko.v_dir * keiko.speed * game_framework.frame_time
 
     @staticmethod
     def draw(keiko):
@@ -302,7 +302,7 @@ class Run:
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
 
-        keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
+        keiko.x += keiko.h_dir * keiko.speed * game_framework.frame_time
 
 
     @staticmethod
@@ -344,8 +344,8 @@ class Dia_Run:
 
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
 
-        keiko.x += keiko.h_dir * RUN_SPEED_PPS * game_framework.frame_time
-        keiko.y += keiko.v_dir * RUN_SPEED_PPS * game_framework.frame_time
+        keiko.x += keiko.h_dir * keiko.speed * game_framework.frame_time
+        keiko.y += keiko.v_dir * keiko.speed * game_framework.frame_time
 
 
 
@@ -439,7 +439,7 @@ class StateMachine:
 
 
 class Keiko:
-    def __init__(self):
+    def __init__(self, speed = 0, power = 0):
         self.x, self.y = 100, 100
         self.frame = 0
         self.h_dir = 0
@@ -451,6 +451,8 @@ class Keiko:
         self.state_machine.start()
         self.hold_ball = False
         self.charging = False
+        self.max_power = 80 + power
+        self.speed = RUN_SPEED_PPS + physical.kmph_to_pps(speed)
         self.power = 0
         self.shrink = 1
         self.shrink_start_time = 0

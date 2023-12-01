@@ -3,6 +3,7 @@ from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTON
 
 import game_framework
 import round_one_mode
+import status_mode
 
 difficulty = ['EASY', 'NORMAL', 'HARD']
 difficulty_rgb = [(255,255,255), (0, 255, 0), (255, 0, 0)]
@@ -29,13 +30,13 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.quit()
+            game_framework.change_mode(status_mode)
         elif event.type == SDL_MOUSEBUTTONDOWN:
             for i in range(3):
                 if 250 * (i + 1) - 100 < event.x < 250 * (i + 1) + 100 and 170 < 800 - 1 - event.y < 330:
-                    pass
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.change_mode(round_one_mode)
+                    if (i + 1) == 1:
+                        game_framework.change_mode(round_one_mode)
+
 
 
 def update():
