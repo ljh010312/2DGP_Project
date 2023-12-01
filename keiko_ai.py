@@ -4,11 +4,10 @@ import random
 import math
 import game_framework
 import game_world
+import miyuki
 import physical
 import server
-from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-import play_mode
 
 PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 40 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
@@ -220,10 +219,12 @@ class Keiko_AI:
         return BehaviorTree.SUCCESS
 
     def is_oppenent_hold_ball(self):  # 상대가 공을 잡고 있는지
-        for miyuki in play_mode.miyuki_ai:
-            if miyuki.hold_ball:
-                self.face_dir = -1
-                return BehaviorTree.SUCCESS
+        for layer in game_world.objects:
+            for o in layer:
+                if isinstance(o, miyuki.Miyuki):
+                    if o.hold_ball:
+                        self.face_dir = -1
+                        return BehaviorTree.SUCCESS
         self.face_dir = 0
         return BehaviorTree.FAIL
 
@@ -259,8 +260,14 @@ class Keiko_AI:
 
     def throw_ball(self):
         if self.state != 'Throw':
+            tx, ty = 450,200
+            for layer in game_world.objects:
+                for o in layer:
+                    if isinstance(o, miyuki.Miyuki):
+                        tx, ty = o.x, o.y
+                        break
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
-                                         "target_x": play_mode.keiko.x, "target_y": play_mode.keiko.y,
+                                         "target_x": tx, "target_y": ty,
                                          "is_bound": False,
                                          "power": self.power, "state": 'KeikoThrow'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,

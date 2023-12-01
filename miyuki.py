@@ -4,6 +4,8 @@ import random
 import math
 import game_framework
 import game_world
+import keiko
+import keiko_ai
 import physical
 import server
 from ball import Ball
@@ -225,12 +227,14 @@ class Miyuki:
         return BehaviorTree.SUCCESS
 
     def is_oppenent_hold_ball(self):  # 상대가 공을 잡고 있는지
-        if play_mode.keiko.hold_ball:
-            self.face_dir = -1
-            return BehaviorTree.SUCCESS
-        else:
-            self.face_dir = 0
-            return BehaviorTree.FAIL
+        for layer in game_world.objects:
+            for o in layer:
+                if isinstance(o, keiko.Keiko) or isinstance(o, keiko_ai.Keiko_AI):
+                    if o.hold_ball:
+                        self.face_dir = -1
+                        return BehaviorTree.SUCCESS
+        self.face_dir = 0
+        return BehaviorTree.FAIL
 
     def set_flee_random_location(self):  # 코트의 바깥쪽 좌표 구하기
         self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
@@ -263,9 +267,15 @@ class Miyuki:
             return BehaviorTree.RUNNING
 
     def throw_ball(self):
+        tx, ty = 450, 200
+        for layer in game_world.objects:
+            for o in layer:
+                if isinstance(o, keiko_ai.Keiko_AI) or isinstance(o, keiko.Keiko):
+                    tx, ty = o.x, o.y
+                    break
         if self.state != 'Throw':
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
-                                         "target_x": play_mode.keiko.x, "target_y": play_mode.keiko.y,
+                                         "target_x": tx, "target_y": ty,
                                          "is_bound": False,
                                          "power": self.power, "state": 'Throw'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
