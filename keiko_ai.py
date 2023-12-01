@@ -84,6 +84,7 @@ catch_motion = (
     Frame(127, 1814, 41, 69),
 )
 
+
 class Keiko_AI:
     image = None
     shadow_image = None
