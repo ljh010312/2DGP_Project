@@ -202,12 +202,6 @@ class Miyuki:
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
 
-    def build_behavior_tree(self):
-        pass
-
-    def distance_less_than(self, x1, y1, x2, y2, r):
-        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
-        return distance2 < (PIXEL_PER_METER * r) ** 2
 
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
@@ -243,7 +237,7 @@ class Miyuki:
         return BehaviorTree.SUCCESS
 
     def is_court_in_ball(self):  # 자신의 코트에 공이 있는 지
-        if server.ball.state == 'Stay' and 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
+        if server.ball.state == 'Stay' and 500 < server.ball.x < 940 and 127 < server.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 

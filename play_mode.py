@@ -8,6 +8,7 @@ from big_ball_potion import Big_Ball_Potion
 from keiko import Keiko
 from court import Court
 from ball import Ball
+from keiko_ai import Keiko_AI
 from miyuki import Miyuki
 import game_world
 from power_up_item import Power_Up_Item
@@ -34,6 +35,7 @@ def init():
     global world
     global ball
     global balls
+    global miyukis
     running = True
     world = []
 
@@ -69,10 +71,15 @@ def init():
     # game_world.add_object(big_ball_potion, 1)
     # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    for _ in range(3):
-        miyuki = Miyuki()
-        game_world.add_object(miyuki, 2)
-        game_world.add_collision_pair('miyuki:ball', miyuki, None)
+    miyukis = [Miyuki() for _ in range(3)]
+    for m in miyukis:
+        game_world.add_object(m, 2)
+        game_world.add_collision_pair('miyuki:ball', m, None)
+
+    keikos = [Keiko_AI() for _ in range(3)]
+    for k in keikos:
+        game_world.add_object(k, 2)
+        game_world.add_collision_pair('keiko:ball', k, None)
 
 
 def update():
