@@ -90,8 +90,8 @@ class Miyuki:
 
     def load_image(self):
         if Miyuki.image == None:
-            Miyuki.image = load_image('miyuki.png')
-            Miyuki.shadow_image = load_image('shadow.png')
+            Miyuki.image = load_image('resource/miyuki.png')
+            Miyuki.shadow_image = load_image('resource/shadow.png')
 
     def __init__(self, x=None, y=None, catch_percentage= 10):
         self.x = x if x else random.randint(400, 700)

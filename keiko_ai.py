@@ -90,8 +90,8 @@ class Keiko_AI:
 
     def load_image(self):
         if Keiko_AI.image == None:
-            Keiko_AI.image = load_image('keiko.png')
-            Keiko_AI.shadow_image = load_image('shadow.png')
+            Keiko_AI.image = load_image('resource/keiko.png')
+            Keiko_AI.shadow_image = load_image('resource/shadow.png')
 
     def __init__(self, x=None, y=None, catch_percentage= 100):
         self.x = x if x else random.randint(400, 700)
@@ -219,7 +219,7 @@ class Keiko_AI:
         return BehaviorTree.SUCCESS
 
     def is_oppenent_hold_ball(self):  # 상대가 공을 잡고 있는지
-        for miyuki in play_mode.miyukis:
+        for miyuki in play_mode.miyuki_ai:
             if miyuki.hold_ball:
                 self.face_dir = -1
                 return BehaviorTree.SUCCESS

@@ -29,15 +29,10 @@ def handle_events():
 
 
 def init():
-    global running
     global court
     global keiko
-    global world
-    global ball
     global balls
-    global miyukis
-    running = True
-    world = []
+    global miyuki_ai
 
     court = Court()
     game_world.add_object(court, 0)
@@ -54,11 +49,6 @@ def init():
     game_world.add_collision_pair('keiko:ball', None, server.ball)
     game_world.add_collision_pair('miyuki:ball', None, server.ball)
 
-    # balls = [Ball(300, random.randint(100,300), 0, 0, 0) for _ in range(10)]
-    # game_world.add_objects(balls, 1)
-    # for b in balls:
-    #     game_world.add_collision_pair('keiko:ball', None, b)
-
     # power_up_item = Power_Up_Item(200, 300 )
     # game_world.add_object(power_up_item, 1)
     # game_world.add_collision_pair('keiko:power_up_item', None, power_up_item)
@@ -71,13 +61,13 @@ def init():
     # game_world.add_object(big_ball_potion, 1)
     # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
 
-    miyukis = [Miyuki() for _ in range(3)]
-    for m in miyukis:
+    miyuki_ai = [Miyuki() for _ in range(3)]
+    for m in miyuki_ai:
         game_world.add_object(m, 2)
         game_world.add_collision_pair('miyuki:ball', m, None)
 
-    keikos = [Keiko_AI() for _ in range(3)]
-    for k in keikos:
+    keiko_ai = [Keiko_AI() for _ in range(3)]
+    for k in keiko_ai:
         game_world.add_object(k, 2)
         game_world.add_collision_pair('keiko:ball', k, None)
 

@@ -445,8 +445,8 @@ class Keiko:
         self.h_dir = 0
         self.v_dir = 0
         self.face_dir = 1
-        self.image = load_image('keiko.png')
-        self.shadow_image = load_image('shadow.png')
+        self.image = load_image('resource/keiko.png')
+        self.shadow_image = load_image('resource/shadow.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.hold_ball = False

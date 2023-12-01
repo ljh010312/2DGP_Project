@@ -20,9 +20,9 @@ class Ball:
 
     def __init__(self, x=400, y=300, z=40, target_x=400, target_y=300, power=0):
         if Ball.image == None:
-            Ball.image = load_image('ball.png')
+            Ball.image = load_image('resource/ball.png')
         if Ball.shadow_image == None:
-            Ball.shadow_image = load_image('shadow.png')
+            Ball.shadow_image = load_image('resource/shadow.png')
 
         self.x, self.y, self.z = x, y, z
         self.shadow_y = y - z
@@ -93,7 +93,7 @@ class Big_Ball:
 
     def __init__(self, x=400, y=300, target_x=400, target_y=300, power=0):
         if Big_Ball.image == None:
-            Big_Ball.image = load_image('ball.png')
+            Big_Ball.image = load_image('resource/ball.png')
         self.x, self.y = x, y
         self.target_x, self.target_y = target_x, target_y
         self.power = power
