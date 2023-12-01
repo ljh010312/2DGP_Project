@@ -86,12 +86,14 @@ catch_motion = (
 
 class Miyuki:
     image = None
+    shadow_image = None
 
     def load_image(self):
         if Miyuki.image == None:
             Miyuki.image = load_image('miyuki.png')
+            Miyuki.shadow_image = load_image('shadow.png')
 
-    def __init__(self, x=None, y=None, catch_percentage= 70):
+    def __init__(self, x=None, y=None, catch_percentage= 10):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -117,6 +119,8 @@ class Miyuki:
 
     def draw(self):
         if self.state == 'Walk':
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - move_lr[int(self.frame)].h / 2,
+                                         move_lr[int(self.frame)].w, 15)
             if math.cos(self.dir) < 0 or self.face_dir == -1:
                 self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
                                                move_lr[int(self.frame)].w,
@@ -129,30 +133,40 @@ class Miyuki:
                                      move_lr[int(self.frame)].h, self.x, self.y, move_lr[int(self.frame)].w,
                                      move_lr[int(self.frame)].h)
         elif self.state == 'Charge':
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - throw_motion[0].h / 2,
+                                        throw_motion[0].w, 15)
             self.image.clip_composite_draw(throw_motion[0].x, throw_motion[0].y,
                                            throw_motion[0].w,
                                            throw_motion[0].h, 0, 'h', self.x, self.y,
                                            throw_motion[0].w,
                                            throw_motion[0].h)
         elif self.state == 'Throw':
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - throw_motion[int(self.frame)].h / 2,
+                                        throw_motion[int(self.frame)].w, 15)
             self.image.clip_composite_draw(throw_motion[int(self.frame)].x, throw_motion[int(self.frame)].y,
                                            throw_motion[int(self.frame)].w,
                                            throw_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
                                            throw_motion[int(self.frame)].w,
                                            throw_motion[int(self.frame)].h)
         elif self.state == 'HitMotion' or self.state == 'Hit':
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 15,
+                                        hit_motion[int(self.frame)].w, 15)
             self.image.clip_composite_draw(hit_motion[int(self.frame)].x, hit_motion[int(self.frame)].y,
                                            hit_motion[int(self.frame)].w,
                                            hit_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
                                            hit_motion[int(self.frame)].w,
                                            hit_motion[int(self.frame)].h)
         elif self.state == 'OutCount' or self.state == 'Out':
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 15,
+                                        hit_motion[7].w, 15)
             self.image.clip_composite_draw(hit_motion[7].x, hit_motion[7].y,
                                            hit_motion[7].w,
                                            hit_motion[7].h, 0, 'h', self.x, self.y,
                                            hit_motion[7].w,
                                            hit_motion[7].h)
         elif self.state == 'CatchMotion' or self.state == 'Catch':
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - catch_motion[int(self.frame)].h / 2,
+                                        catch_motion[int(self.frame)].w, 15)
             self.image.clip_composite_draw(catch_motion[int(self.frame)].x, catch_motion[int(self.frame)].y,
                                            catch_motion[int(self.frame)].w,
                                            catch_motion[int(self.frame)].h, 0, 'h', self.x, self.y,
