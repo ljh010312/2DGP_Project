@@ -1,4 +1,4 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font, load_music
+from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font, load_music, load_wav
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN
 
 import game_framework
@@ -19,6 +19,11 @@ def init():
     global frame
     global state
     global bgm
+    global up, down
+    up = load_wav('resource/up.wav')
+    up.set_volume(50)
+    down = load_wav('resource/down.wav')
+    down.set_volume(50)
     bgm = load_music('resource/status.mp3')
     bgm.set_volume(32)
     bgm.repeat_play()
@@ -54,11 +59,13 @@ def handle_events():
                     if 450 < 800 - 1 - event.y < 550:
                         if count <= 0: break
                         if state[i] >= 10: break
+                        up.play()
                         state[i] += 1
                         count -= 1
                     elif 50 < 800 - 1 - event.y < 150:
                         if count >= 10: break
                         if state[i] <= 0: break
+                        down.play()
                         state[i] -= 1
                         count += 1
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
