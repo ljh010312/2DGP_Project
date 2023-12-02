@@ -547,6 +547,7 @@ class Keiko:
         if self.shrink == 2:
             if get_time() - self.shrink_start_time > 5.0:
                 self.shrink = 1
+                self.speed = self.temp_speed
         if self.charging:
             server.ball.x = self.x - self.face_dir *  20
             server.ball.y = self.y + 25
@@ -567,6 +568,8 @@ class Keiko:
         elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
             if is_have(Shrink_Potion):
                 self.shrink = 2
+                self.temp_speed = self.speed
+                self.speed = physical.kmph_to_pps(35)
                 self.shrink_start_time = get_time()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
             if is_have(Big_Ball_Potion):

@@ -4,6 +4,7 @@ from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTON
 import game_framework
 import round_one_mode
 import select_round_mode
+import server
 import title_mode
 from keiko_ai import catch_motion, throw_motion, move_lr
 from physical import FRAMES_PER_ACTION, ACTION_PER_TIME
@@ -31,7 +32,7 @@ def init():
     background = load_image('resource/status_background.png')
     font = load_font('resource/neodgm.ttf', 50)
     keiko = load_image('resource/keiko.png')
-    count = 10
+    count = server.count
     state = [0, 0, 0]
     frame = 0
 

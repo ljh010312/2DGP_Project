@@ -42,7 +42,6 @@ class Ball:
                                         15 * self.shadow_scale)
         self.image.clip_draw(3, 51, 26, 26, self.x, self.y, 20 * self.scale, 20 * self.scale)
 
-        draw_rectangle(*self.get_bb())
 
     def update(self):
 
@@ -62,12 +61,17 @@ class Ball:
                 self.scale = 1
         if self.x < 50:
             self.direction += math.pi
+            self.is_bound = True
         if self.x > 950:
             self.direction += math.pi
+            self.is_bound = True
         if self.y < 127:
             self.direction += math.pi
+            self.is_bound = True
         if self.y > 435:
             self.direction += math.pi
+            self.is_bound = True
+
 
 
 

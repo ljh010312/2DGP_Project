@@ -127,6 +127,7 @@ def win_or_lose():
         game_framework.change_mode(gameover_mode)
 
     if miyuki_count == 0:
+        server.count += 3
         game_framework.change_mode(win_mode)
 
 

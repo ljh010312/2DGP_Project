@@ -64,6 +64,9 @@ def draw():
         font.draw(250 * (i + 1) - 50, 130, difficulty[i], difficulty_rgb[i])
 
     font.draw(230, 700, '난이도를 선택해주세요', (255, 255, 255))
+    font.draw(30, 80, 'wasd: 이동     /   마우스: 공 던지기', (255, 255, 255))
+    font.draw(30, 30, '1,2,3: 아이템   /   r: 팀원으로 부활', (255, 255, 255))
+
 
     update_canvas()
 

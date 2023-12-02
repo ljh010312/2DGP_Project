@@ -191,7 +191,6 @@ class Miyuki:
                                            catch_motion[int(self.frame)].w,
                                            catch_motion[int(self.frame)].h)
 
-        draw_rectangle(*self.get_bb())
 
     def image_update(self):
         if self.select_image == 1:

@@ -178,7 +178,6 @@ class Keiko_AI:
                                            catch_motion[int(self.frame)].w,
                                            catch_motion[int(self.frame)].h)
 
-        draw_rectangle(*self.get_bb())
 
     def handle_event(self, event):
         pass
