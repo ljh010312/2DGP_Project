@@ -56,26 +56,20 @@ def init():
     keiko = Keiko(speed=status_mode.state[0], power=status_mode.state[1], catch_percentage=status_mode.state[2])
     game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
-    # game_world.add_collision_pair('keiko:power_up_item', keiko, None)
-    # game_world.add_collision_pair('keiko:shrink_potion', keiko, None)
-    # game_world.add_collision_pair('keiko:big_ball_potion', keiko, None)
 
     server.ball = Ball(490, 300, 40, 480, 300, 0)
     game_world.add_object(server.ball, 1)
     game_world.add_collision_pair('keiko:ball', None, server.ball)
     game_world.add_collision_pair('miyuki:ball', None, server.ball)
 
-    # power_up_item = Power_Up_Item(200, 300 )
-    # game_world.add_object(power_up_item, 1)
-    # game_world.add_collision_pair('keiko:power_up_item', None, power_up_item)
-    #
-    # shrink_potion = Shrink_Potion(200, 200)
-    # game_world.add_object(shrink_potion, 1)
-    # game_world.add_collision_pair('keiko:shrink_potion', None, shrink_potion)
-    #
-    # big_ball_potion = Big_Ball_Potion(100, 200)
-    # game_world.add_object(big_ball_potion, 1)
-    # game_world.add_collision_pair('keiko:big_ball_potion', None, big_ball_potion)
+    power_up_item = Power_Up_Item(100, 30)
+    game_world.add_object(power_up_item, 1)
+
+    shrink_potion = Shrink_Potion(150, 30)
+    game_world.add_object(shrink_potion, 1)
+
+    big_ball_potion = Big_Ball_Potion(200, 30)
+    game_world.add_object(big_ball_potion, 1)
 
     with open('resource/round_three_data.toml', 'rb') as f:
         miyuki_data_list = tomllib.load(f)['miyuki']

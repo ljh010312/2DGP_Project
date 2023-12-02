@@ -5,12 +5,11 @@ class Big_Ball_Potion:
 
     def __init__(self, x = 400, y = 300):
         if Big_Ball_Potion.image == None:
-            Big_Ball_Potion.image = load_image('item.png')
+            Big_Ball_Potion.image = load_image('resource/item.png')
         self.x, self.y= x, y
 
     def draw(self):
-        self.image.clip_draw(893, 399, 66, 82, self.x, self.y, 20, 25)
-        draw_rectangle(*self.get_bb())
+        self.image.clip_draw(893, 399, 66, 82, self.x, self.y, 40, 50)
 
     def update(self):
         pass

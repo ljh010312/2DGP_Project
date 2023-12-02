@@ -268,12 +268,12 @@ class Miyuki:
         return BehaviorTree.SUCCESS
 
     def is_court_in_ball(self):  # 자신의 코트에 공이 있는 지
-        if server.ball.state == 'Stay' and 485 < server.ball.x < 950 and 127 < server.ball.y < 435:
+        if server.ball.state == 'Stay' and 485 < server.ball.x < 950 and 120 < server.ball.y < 440:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
     def set_ball_location(self):
-        if 485 < server.ball.x < 950 and 127 < server.ball.y < 435:
+        if 485 < server.ball.x < 950 and 120 < server.ball.y < 440:
             self.tx, self.ty = server.ball.x, server.ball.y
         return BehaviorTree.SUCCESS
 

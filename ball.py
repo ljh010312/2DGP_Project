@@ -34,12 +34,13 @@ class Ball:
         self.shadow_scale = 1
         self.state = 'Stay'
         self.is_bound = False
-
+        self.scale = 1
+        self.scale_time = 0
     def draw(self):
         if not self.state == 'Hold':
-            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y, 25 * self.shadow_scale,
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y - 10 * (self.scale - 1), 25 * self.shadow_scale * self.scale,
                                         15 * self.shadow_scale)
-        self.image.clip_draw(3, 51, 26, 26, self.x, self.y, 20, 20)
+        self.image.clip_draw(3, 51, 26, 26, self.x, self.y, 20 * self.scale, 20 * self.scale)
 
         draw_rectangle(*self.get_bb())
 
@@ -56,6 +57,9 @@ class Ball:
         if (self.state == 'KeikoThrow' or self.state == 'Throw') and self.power == 0:
             self.state = 'Stay'
 
+        if self.scale == 2:
+            if get_time() - self.scale_time > 2.0:
+                self.scale = 1
         if self.x < 50:
             self.direction += math.pi
         if self.x > 950:
@@ -81,7 +85,7 @@ class Ball:
         if self.power < 10: self.power = 0.0
 
     def get_bb(self):
-        return self.x - 10, self.y - 10, self.x + 10, self.y + 10
+        return self.x - (10 * self.scale), self.y - (10 * self.scale), self.x + (10 * self.scale), self.y + (10 * self.scale)
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':

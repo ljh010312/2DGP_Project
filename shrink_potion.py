@@ -5,12 +5,11 @@ class Shrink_Potion:
 
     def __init__(self, x = 400, y = 300):
         if Shrink_Potion.image == None:
-            Shrink_Potion.image = load_image('item.png')
+            Shrink_Potion.image = load_image('resource/item.png')
         self.x, self.y= x, y
 
     def draw(self):
-        self.image.clip_draw(408, 399, 63, 82, self.x, self.y, 20, 25)
-        draw_rectangle(*self.get_bb())
+        self.image.clip_draw(408, 399, 63, 82, self.x, self.y, 40, 50)
 
     def update(self):
         pass
