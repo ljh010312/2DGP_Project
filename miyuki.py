@@ -87,6 +87,9 @@ catch_motion = (
 
 class Miyuki:
     image = None
+    image_one = None
+    image_two = None
+    image_three = None
     shadow_image = None
     catch_sound = None
     throw_sound = None
@@ -94,6 +97,9 @@ class Miyuki:
     def load_image(self):
         if Miyuki.image == None:
             Miyuki.image = load_image('resource/miyuki.png')
+            Miyuki.image_one = load_image('resource/miyuki.png')
+            Miyuki.image_two = load_image('resource/miyuki2.png')
+            Miyuki.image_three = load_image('resource/miyuki3.png')
             Miyuki.shadow_image = load_image('resource/shadow.png')
             Miyuki.catch_sound = load_wav('resource/catch_ball.wav')
             Miyuki.hit_sound = load_wav('resource/bound_ball.wav')
@@ -102,7 +108,7 @@ class Miyuki:
             Miyuki.hit_sound.set_volume(70)
             Miyuki.catch_sound.set_volume(70)
 
-    def __init__(self, x=None, y=None, speed= 0, max_power= 0, catch_percentage= 60):
+    def __init__(self, x=None, y=None, speed= 0, max_power= 0, catch_percentage= 60, select_image = 1):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -118,11 +124,13 @@ class Miyuki:
         self.power = 0
         self.max_power = max_power
         self.catch_percentage = catch_percentage
+        self.select_image = select_image
 
     def get_bb(self):
         return self.x - 15, self.y - 40, self.x + 15, self.y + 40
 
     def update(self):
+        self.image_update()
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.bt.run()
         # self.face_dir = -1 if math.cos(self.dir) < 0 else 1
@@ -184,6 +192,14 @@ class Miyuki:
                                            catch_motion[int(self.frame)].h)
 
         draw_rectangle(*self.get_bb())
+
+    def image_update(self):
+        if self.select_image == 1:
+            self.image = self.image_one
+        elif self.select_image == 2:
+            self.image = self.image_two
+        else:
+            self.image = self.image_three
 
     def handle_event(self, event):
         pass

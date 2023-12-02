@@ -3,7 +3,7 @@ court = [
 ]
 
 miyuki = [
-    {x= 800, y= 300, speed=  13, max_power=  65, catch_percentage= 58},
-    {x= 800, y= 180, speed=  14, max_power=  68, catch_percentage= 52},
-    {x= 600, y= 240, speed=  12, max_power=  60, catch_percentage= 60}
+    {x= 800, y= 300, speed=  13, max_power=  65, catch_percentage= 58, select_image= 1},
+    {x= 800, y= 180, speed=  14, max_power=  68, catch_percentage= 52, select_image= 1},
+    {x= 600, y= 240, speed=  12, max_power=  60, catch_percentage= 60, select_image= 1}
 ]
