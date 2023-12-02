@@ -268,12 +268,12 @@ class Miyuki:
         return BehaviorTree.SUCCESS
 
     def is_court_in_ball(self):  # 자신의 코트에 공이 있는 지
-        if server.ball.state == 'Stay' and 500 < server.ball.x < 940 and 127 < server.ball.y < 435:
+        if server.ball.state == 'Stay' and 490 < server.ball.x < 950 and 127 < server.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
     def set_ball_location(self):
-        if 510 < server.ball.x < 870 and 127 < server.ball.y < 435:
+        if 490 < server.ball.x < 950 and 127 < server.ball.y < 435:
             self.tx, self.ty = server.ball.x, server.ball.y
         return BehaviorTree.SUCCESS
 
@@ -363,6 +363,8 @@ class Miyuki:
         self.dir = math.atan2(self.y - server.ball.y, self.x - server.ball.x)
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+        self.x = clamp(480, self.x, 950)
+        self.y = clamp(125, self.y, 435)
         self.face_dir = -1
         return BehaviorTree.RUNNING
 

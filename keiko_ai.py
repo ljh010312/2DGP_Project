@@ -102,7 +102,7 @@ class Keiko_AI:
             Keiko_AI.catch_sound.set_volume(70)
 
     def __init__(self, speed = 0, power = 0,catch_percentage= 0):
-        self.x = random.randint(400, 700)
+        self.x = random.randint(100, 300)
         self.y = random.randint(105, 330)
         self.load_image()
         self.dir = 0.0
@@ -338,6 +338,8 @@ class Keiko_AI:
         self.dir = math.atan2(self.y - server.ball.y, self.x - server.ball.x)
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+        self.x = clamp(50, self.x, 480)
+        self.y = clamp(125, self.y, 435)
         self.face_dir = 1
         return BehaviorTree.RUNNING
 

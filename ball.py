@@ -56,18 +56,16 @@ class Ball:
         if (self.state == 'KeikoThrow' or self.state == 'Throw') and self.power == 0:
             self.state = 'Stay'
 
-
-        if self.x < 25:
+        if self.x < 50:
+            self.direction += math.pi
+        if self.x > 950:
+            self.direction += math.pi
+        if self.y < 127:
+            self.direction += math.pi
+        if self.y > 435:
             self.direction += math.pi
 
-        if self.x > 1024 - 25:
-            self.direction += 3.141592 / 2
 
-        if self.y < 25:
-            self.direction += 3.141592 / 2
-
-        if self.y > 500:
-            self.direction += 3.141592 / 2
 
     def bound(self):
         bound_decay = 0.5

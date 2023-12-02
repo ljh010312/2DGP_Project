@@ -30,6 +30,8 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_mode(select_round_mode)
+        elif event.type == SDL_MOUSEBUTTONDOWN:
+            print(event.x, 800 - 1 - event.y)
         else:
             keiko.handle_event(event)
 
