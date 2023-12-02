@@ -504,6 +504,7 @@ class Keiko:
         self.throw_sound = load_wav('resource/throw_ball.wav')
         self.catch_sound = load_wav('resource/catch_ball.wav')
         self.hit_sound = load_wav('resource/bound_ball.wav')
+        self.star_image = load_image('resource/item.png')
         self.hit_sound.set_volume(70)
         self.catch_sound.set_volume(70)
         self.throw_sound.set_volume(50)
@@ -548,6 +549,7 @@ class Keiko:
         pass
 
     def draw(self):
+        self.star_image.clip_draw(784, 304, 86, 83, self.x, self.y + 50, 20, 20)
         self.state_machine.draw()
 
         # draw_rectangle(*self.get_bb())
