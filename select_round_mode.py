@@ -3,6 +3,8 @@ from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTON
 
 import game_framework
 import round_one_mode
+import round_three_mode
+import round_two_mode
 import status_mode
 
 difficulty = ['EASY', 'NORMAL', 'HARD']
@@ -42,6 +44,10 @@ def handle_events():
                 if 250 * (i + 1) - 100 < event.x < 250 * (i + 1) + 100 and 170 < 800 - 1 - event.y < 330:
                     if (i + 1) == 1:
                         game_framework.change_mode(round_one_mode)
+                    elif i + 1 == 2:
+                        game_framework.change_mode(round_two_mode)
+                    elif i + 1 == 3:
+                        game_framework.change_mode(round_three_mode)
 
 
 

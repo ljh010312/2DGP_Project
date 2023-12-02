@@ -1,0 +1,9 @@
+court = [
+    {court_num= 3}
+]
+
+miyuki = [
+    {x= 800, y= 300, speed=  23, max_power=  85, catch_percentage= 78},
+    {x= 800, y= 180, speed=  24, max_power=  88, catch_percentage= 72},
+    {x= 600, y= 240, speed=  25, max_power=  80, catch_percentage= 76}
+]
