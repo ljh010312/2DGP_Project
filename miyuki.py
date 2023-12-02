@@ -88,13 +88,21 @@ catch_motion = (
 class Miyuki:
     image = None
     shadow_image = None
-
+    catch_sound = None
+    throw_sound = None
+    hit_sound = None
     def load_image(self):
         if Miyuki.image == None:
             Miyuki.image = load_image('resource/miyuki.png')
             Miyuki.shadow_image = load_image('resource/shadow.png')
+            Miyuki.catch_sound = load_wav('resource/catch_ball.wav')
+            Miyuki.hit_sound = load_wav('resource/bound_ball.wav')
+            Miyuki.throw_sound = load_wav('resource/throw_ball.wav')
+            Miyuki.throw_sound.set_volume(50)
+            Miyuki.hit_sound.set_volume(70)
+            Miyuki.catch_sound.set_volume(70)
 
-    def __init__(self, x=None, y=None, speed = 0, max_power = 0, catch_percentage= 60):
+    def __init__(self, x=None, y=None, speed= 0, max_power= 0, catch_percentage= 60):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -191,12 +199,14 @@ class Miyuki:
                 other.y = self.y
             elif other.state == 'KeikoThrow' and not other.is_bound:
                 if self.can_catch():
+                    self.catch_sound.play()
                     self.state = 'Catch'
                     self.hold_ball = True
                     other.state = 'Hold'
                     other.x = self.x + self.face_dir * 15
                     other.y = self.y
                 else:
+                    self.hit_sound.play()
                     self.state = 'Hit'
                     other.direction += math.pi
 
@@ -282,6 +292,7 @@ class Miyuki:
             self.frame = 0
             self.state = 'Throw'
             self.power = 0
+            self.throw_sound.play()
         if self.frame < 7:
             return BehaviorTree.RUNNING
         else:

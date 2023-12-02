@@ -87,11 +87,19 @@ catch_motion = (
 class Keiko_AI:
     image = None
     shadow_image = None
-
+    catch_sound = None
+    throw_sound = None
+    hit_sound = None
     def load_image(self):
         if Keiko_AI.image == None:
             Keiko_AI.image = load_image('resource/keiko.png')
             Keiko_AI.shadow_image = load_image('resource/shadow.png')
+            Keiko_AI.catch_sound = load_wav('resource/catch_ball.wav')
+            Keiko_AI.hit_sound = load_wav('resource/bound_ball.wav')
+            Keiko_AI.throw_sound = load_wav('resource/throw_ball.wav')
+            Keiko_AI.throw_sound.set_volume(50)
+            Keiko_AI.hit_sound.set_volume(70)
+            Keiko_AI.catch_sound.set_volume(70)
 
     def __init__(self, speed = 0, power = 0,catch_percentage= 0):
         self.x = random.randint(400, 700)
@@ -259,6 +267,7 @@ class Keiko_AI:
 
     def throw_ball(self):
         if self.state != 'Throw':
+            self.throw_sound.play()
             tx, ty = 450,200
             for layer in game_world.objects:
                 for o in layer:
@@ -282,6 +291,7 @@ class Keiko_AI:
 
     def is_hit(self):
         if self.state == 'Hit':
+            self.hit_sound.play()
             self.frame = 0
             return BehaviorTree.SUCCESS
         elif self.state == 'HitMotion':
@@ -338,6 +348,7 @@ class Keiko_AI:
 
     def is_catch(self):
         if self.state == 'Catch':
+            self.catch_sound.play()
             self.frame = 0
             return BehaviorTree.SUCCESS
         elif self.state == 'CatchMotion':

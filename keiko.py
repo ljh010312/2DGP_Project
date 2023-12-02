@@ -1,7 +1,7 @@
 import math
 import random
 
-from pico2d import load_image, draw_rectangle, clamp, get_time
+from pico2d import load_image, draw_rectangle, clamp, get_time, load_wav
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_d, SDLK_a, SDLK_w, SDLK_s, SDL_MOUSEBUTTONDOWN, \
     SDL_BUTTON_LEFT, SDL_MOUSEBUTTONUP, SDLK_SPACE
 
@@ -260,6 +260,7 @@ class Throw_Ball:
     @staticmethod
     def enter(keiko, e):
         keiko.frame = 0
+        keiko.throw_sound.play()
         keiko.hold_ball = False
         keiko.wait_time = get_time()
         keiko.face_dir = 1 if keiko.x - e[1].x < 0 else -1
@@ -500,6 +501,12 @@ class Keiko:
         self.face_dir = 1
         self.image = load_image('resource/keiko.png')
         self.shadow_image = load_image('resource/shadow.png')
+        self.throw_sound = load_wav('resource/throw_ball.wav')
+        self.catch_sound = load_wav('resource/catch_ball.wav')
+        self.hit_sound = load_wav('resource/bound_ball.wav')
+        self.hit_sound.set_volume(70)
+        self.catch_sound.set_volume(70)
+        self.throw_sound.set_volume(50)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.hold_ball = False
@@ -560,14 +567,20 @@ class Keiko:
                 #여기에 맞았을 때 추가
                 if self.catch:
                     if random.randint(1, 100) < self.catch_percentage:
+                        self.catch_sound.play()
                         other.x = self.x + 15
                         other.y = self.y
                         other.z = 0
                         other.power = 0
                         other.state = 'Stay'
                     else:
+                        self.hit_sound.play()
                         self.state_machine.handle_event(('HIT', 0))
                         other.direction += math.pi
+                else:
+                    self.hit_sound.play()
+                    self.state_machine.handle_event(('HIT', 0))
+                    other.direction += math.pi
 
         elif group == 'keiko:power_up_item':
             self.power = 10
