@@ -266,7 +266,7 @@ class Throw_Ball:
         keiko.face_dir = 1 if keiko.x - e[1].x < 0 else -1
         if keiko.item == 'ball':
             server.ball.__dict__.update({"x": keiko.x - 20, "y": keiko.y + 25, "z": 40, "z_speed": 0,
-                                         "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,
+                                         "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,"bound_count": 0,
                                          "power": keiko.power, "state": 'KeikoThrow'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
@@ -561,7 +561,7 @@ class Keiko:
                 other.x = self.x + self.h_dir * 15
                 other.y = self.y
                 other.state = 'Hold'
-                print('?')
+                other.bound_count = 4
                 self.hold_ball = True
             if other.state == 'Throw' and not other.is_bound:
                 #여기에 맞았을 때 추가
@@ -572,6 +572,7 @@ class Keiko:
                         other.y = self.y
                         other.z = 0
                         other.power = 0
+                        other.bound_count = 4
                         other.state = 'Stay'
                     else:
                         self.hit_sound.play()

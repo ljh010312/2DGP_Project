@@ -192,6 +192,7 @@ class Keiko_AI:
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
+                other.bound_count = 4
             elif other.state == 'Throw' and not other.is_bound:
                 if self.can_catch():
                     self.state = 'Catch'
@@ -199,6 +200,7 @@ class Keiko_AI:
                     other.state = 'Hold'
                     other.x = self.x + self.face_dir * 15
                     other.y = self.y
+                    other.bound_count = 4
                 else:
                     self.state = 'Hit'
                     other.direction += math.pi
@@ -276,7 +278,7 @@ class Keiko_AI:
                         break
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": tx, "target_y": ty,
-                                         "is_bound": False,
+                                         "is_bound": False, "bound_count": 0,
                                          "power": self.power, "state": 'KeikoThrow'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)

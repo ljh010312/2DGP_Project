@@ -17,13 +17,14 @@ Z_SPEED_PPS = (Z_SPEED_MPS * PIXEL_PER_METER)
 class Ball:
     image = None
     shadow_image = None
-
+    bound_sound = None
     def __init__(self, x=400, y=300, z=40, target_x=400, target_y=300, power=0):
         if Ball.image == None:
             Ball.image = load_image('resource/ball.png')
-        if Ball.shadow_image == None:
             Ball.shadow_image = load_image('resource/shadow.png')
-
+            Ball.bound_sound = load_wav('resource/bound_ball.wav')
+            Ball.bound_sound.set_volume(60)
+        self.bound_count = 0
         self.x, self.y, self.z = x, y, z
         self.shadow_y = y - z
         self.z_speed = 0
@@ -71,6 +72,9 @@ class Ball:
     def bound(self):
         bound_decay = 0.5
         set_stop = 2
+        if self.bound_count < 4:
+            self.bound_sound.play()
+        self.bound_count += 1
         self.is_bound = True
         self.z = 0.0
         self.z_speed = abs(self.z_speed) * bound_decay

@@ -197,6 +197,7 @@ class Miyuki:
                 other.state = 'Hold'
                 other.x = self.x + self.face_dir * 15
                 other.y = self.y
+                other.bound_count = 4
             elif other.state == 'KeikoThrow' and not other.is_bound:
                 if self.can_catch():
                     self.catch_sound.play()
@@ -205,6 +206,7 @@ class Miyuki:
                     other.state = 'Hold'
                     other.x = self.x + self.face_dir * 15
                     other.y = self.y
+                    other.bound_count = 4
                 else:
                     self.hit_sound.play()
                     self.state = 'Hit'
@@ -285,7 +287,7 @@ class Miyuki:
         if self.state != 'Throw':
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": tx, "target_y": ty,
-                                         "is_bound": False,
+                                         "is_bound": False,"bound_count": 0,
                                          "power": self.power, "state": 'Throw'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
