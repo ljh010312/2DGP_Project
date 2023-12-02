@@ -1,4 +1,4 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font
+from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font, load_music
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN
 
 import game_framework
@@ -18,6 +18,10 @@ def init():
     global keiko
     global frame
     global state
+    global bgm
+    bgm = load_music('resource/status.mp3')
+    bgm.set_volume(32)
+    bgm.repeat_play()
     status = load_image('resource/status.png')
     background = load_image('resource/status_background.png')
     font = load_font('resource/neodgm.ttf', 50)
@@ -27,6 +31,7 @@ def init():
     frame = 0
 
 def finish():
+    bgm.stop()
     pass
 
 

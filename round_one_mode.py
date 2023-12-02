@@ -37,7 +37,10 @@ def init():
     global keiko
     global balls
     global miyuki_ai
-
+    global bgm
+    bgm = load_music('resource/1_Stage.mp3')
+    bgm.set_volume(32)
+    bgm.repeat_play()
     with open('resource/round_one_data.toml', 'rb') as f:
         court_data_list = tomllib.load(f)['court']
         for c in court_data_list:
@@ -100,6 +103,7 @@ def draw():
     update_canvas()
 
 def finish():
+    bgm.stop()
     server.ball = None
     game_world.clear()
 

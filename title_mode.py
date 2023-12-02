@@ -1,4 +1,4 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font
+from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font, load_music
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
 
 import game_framework
@@ -9,12 +9,16 @@ import status_mode
 def init():
     global image
     global font
-
+    global bgm
+    bgm = load_music('resource/title.mp3')
+    bgm.set_volume(32)
+    bgm.repeat_play()
     image = load_image('resource/title.png')
     font = load_font('resource/neodgm.ttf', 100)
 
 
 def finish():
+    bgm.stop()
     pass
 
 
