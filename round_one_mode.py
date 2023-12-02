@@ -4,11 +4,12 @@ import tomllib
 from pico2d import *
 
 import game_framework
+import gameover_mode
 import physical
 import select_round_mode
 import server
 import status_mode
-from big_ball_potion import Big_Ball_Potion
+import win_mode
 from keiko import Keiko
 from court import Court
 from ball import Ball
@@ -17,6 +18,7 @@ from miyuki import Miyuki
 import game_world
 from power_up_item import Power_Up_Item
 from shrink_potion import Shrink_Potion
+from big_ball_potion import Big_Ball_Potion
 
 
 def handle_events():
@@ -47,8 +49,6 @@ def init():
             court = Court()
             court.__dict__.update(c)
             game_world.add_object(court, 0)
-
-
 
 
     keiko = Keiko(status_mode.state[0], status_mode.state[1], status_mode.state[2])
@@ -86,15 +86,16 @@ def init():
 
 
 
-    keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
-    for k in keiko_ai:
-        game_world.add_object(k, 2)
-        game_world.add_collision_pair('keiko:ball', k, None)
+    # keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
+    # for k in keiko_ai:
+    #     game_world.add_object(k, 2)
+    #     game_world.add_collision_pair('keiko:ball', k, None)
 
 
 def update():
     game_world.update()
     game_world.handle_collisions()
+    win_or_lose()
 
 
 def draw():
@@ -114,3 +115,18 @@ def resume():
 
 def pause():
     pass
+
+def win_or_lose():
+    keiko_count = 0
+    miyuki_count = 0
+    for layer in game_world.objects:
+        for o in layer:
+            if isinstance(o, Keiko_AI) or isinstance(o, Keiko):
+                keiko_count += 1
+            elif isinstance(o, Miyuki):
+                miyuki_count += 1
+    if keiko_count == 0:
+        game_framework.change_mode(gameover_mode)
+
+    if miyuki_count == 0:
+        game_framework.change_mode(win_mode)
