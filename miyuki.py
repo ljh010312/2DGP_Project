@@ -264,16 +264,16 @@ class Miyuki:
         return BehaviorTree.FAIL
 
     def set_flee_random_location(self):  # 코트의 바깥쪽 좌표 구하기
-        self.tx, self.ty = random.randint(800, 870), random.randint(127, 435)
+        self.tx, self.ty = random.randint(650, 700), random.randint(127, 435)
         return BehaviorTree.SUCCESS
 
     def is_court_in_ball(self):  # 자신의 코트에 공이 있는 지
-        if server.ball.state == 'Stay' and 490 < server.ball.x < 950 and 127 < server.ball.y < 435:
+        if server.ball.state == 'Stay' and 485 < server.ball.x < 950 and 127 < server.ball.y < 435:
             return BehaviorTree.SUCCESS
         return BehaviorTree.FAIL
 
     def set_ball_location(self):
-        if 490 < server.ball.x < 950 and 127 < server.ball.y < 435:
+        if 485 < server.ball.x < 950 and 127 < server.ball.y < 435:
             self.tx, self.ty = server.ball.x, server.ball.y
         return BehaviorTree.SUCCESS
 

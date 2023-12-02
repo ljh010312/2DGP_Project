@@ -30,6 +30,8 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_mode(select_round_mode)
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_r:
+            keiko_out()
         else:
             keiko.handle_event(event)
 
@@ -51,7 +53,7 @@ def init():
             game_world.add_object(court, 0)
 
 
-    keiko = Keiko(status_mode.state[0], status_mode.state[1], status_mode.state[2])
+    keiko = Keiko(speed=status_mode.state[0], power=status_mode.state[1], catch_percentage=status_mode.state[2])
     game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
     # game_world.add_collision_pair('keiko:power_up_item', keiko, None)
@@ -130,3 +132,25 @@ def win_or_lose():
 
     if miyuki_count == 0:
         game_framework.change_mode(win_mode)
+
+
+def keiko_out():
+    global keiko
+    keiko_live = False
+    keiko_ai_live = False
+    temp = None
+    for layer in game_world.objects:
+        for o in layer:
+            if isinstance(o, Keiko_AI):
+                if o.state == 'Walk':
+                    temp = o
+                    keiko_ai_live = True
+            if isinstance(o, Keiko):
+                keiko_live = True
+
+    if not keiko_live:
+        if keiko_ai_live:
+            keiko = Keiko(x= temp.x, y= temp.y, speed=status_mode.state[0], power=status_mode.state[1],  catch_percentage= status_mode.state[2])
+            game_world.add_object(keiko, 2)
+            game_world.add_collision_pair('keiko:ball', keiko, None)
+            game_world.remove_object(temp)

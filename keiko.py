@@ -151,7 +151,7 @@ class Out:
 
     @staticmethod
     def do(keiko):
-        if get_time() - keiko.wait_time > 3.0:
+        if get_time() - keiko.wait_time > 1:
             game_world.remove_object(keiko)
 
 
@@ -493,8 +493,8 @@ class StateMachine:
 
 
 class Keiko:
-    def __init__(self, speed = 0, power = 0, catch_percentage = 0):
-        self.x, self.y = 100, 100
+    def __init__(self, x = 100, y = 100, speed = 0, power = 0, catch_percentage = 0):
+        self.x, self.y = x, y
         self.frame = 0
         self.h_dir = 0
         self.v_dir = 0
