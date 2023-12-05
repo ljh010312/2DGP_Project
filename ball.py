@@ -66,10 +66,10 @@ class Ball:
             self.direction += math.pi
             self.is_bound = True
         if self.y < 127:
-            self.direction += math.pi
+            self.direction += math.pi / 2
             self.is_bound = True
         if self.y > 435:
-            self.direction += math.pi
+            self.direction += math.pi /2
             self.is_bound = True
 
 
