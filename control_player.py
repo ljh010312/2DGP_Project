@@ -3,6 +3,7 @@ from keiko import Keiko
 from court import Court
 import game_world
 
+
 def handle_events():
     global running
 

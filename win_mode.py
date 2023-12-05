@@ -24,7 +24,6 @@ def finish():
 
 
 def handle_events():
-
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -48,7 +47,6 @@ def draw():
     font.draw(30, 50, 'EXIT', (255, 255, 255))
     font.draw(870, 50, 'NEXT', (255, 255, 255))
     update_canvas()
-
 
 
 def resume():

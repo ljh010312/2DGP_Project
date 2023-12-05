@@ -85,6 +85,7 @@ catch_motion = (
     Frame(134, 1950, 43, 83)
 )
 
+
 class Miyuki:
     image = None
     image_one = None
@@ -94,6 +95,7 @@ class Miyuki:
     catch_sound = None
     throw_sound = None
     hit_sound = None
+
     def load_image(self):
         if Miyuki.image == None:
             Miyuki.image = load_image('resource/miyuki.png')
@@ -108,7 +110,7 @@ class Miyuki:
             Miyuki.hit_sound.set_volume(70)
             Miyuki.catch_sound.set_volume(70)
 
-    def __init__(self, x=None, y=None, speed= 0, max_power= 0, catch_percentage= 60, select_image = 1):
+    def __init__(self, x=None, y=None, speed=0, max_power=0, catch_percentage=60, select_image=1):
         self.x = x if x else random.randint(400, 700)
         self.y = y if y else random.randint(105, 330)
         self.load_image()
@@ -138,7 +140,7 @@ class Miyuki:
     def draw(self):
         if self.state == 'Walk':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - move_lr[int(self.frame)].h / 2,
-                                         move_lr[int(self.frame)].w, 15)
+                                        move_lr[int(self.frame)].w, 15)
             if math.cos(self.dir) < 0 or self.face_dir == -1:
                 self.image.clip_composite_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
                                                move_lr[int(self.frame)].w,
@@ -191,7 +193,6 @@ class Miyuki:
                                            catch_motion[int(self.frame)].w,
                                            catch_motion[int(self.frame)].h)
 
-
     def image_update(self):
         if self.select_image == 1:
             self.image = self.image_one
@@ -231,14 +232,10 @@ class Miyuki:
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
 
-
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
-
-
-
 
     def move_to(self, r=2):
         self.state = 'Walk'
@@ -302,7 +299,7 @@ class Miyuki:
         if self.state != 'Throw':
             server.ball.__dict__.update({"x": self.x + 20, "y": self.y + 25, "z": 40, "z_speed": 0,
                                          "target_x": tx, "target_y": ty,
-                                         "is_bound": False,"bound_count": 0,
+                                         "is_bound": False, "bound_count": 0,
                                          "power": self.power, "state": 'Throw'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
@@ -415,8 +412,6 @@ class Miyuki:
         c2 = Condition('코트 공이 있는지', self.is_court_in_ball)
         a4 = Action('공 위치로 설정', self.set_ball_location)
 
-
-
         root = SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
 
         c6 = Condition('상대가 공을 던졌는지', self.is_keiko_throw_ball)
@@ -430,7 +425,8 @@ class Miyuki:
 
         root = SEQ_throw_ball = Sequence('공 던지기', c3, a5, a6)
 
-        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_flee_from_ball,SEQ_ball_loc_move, SEQ_throw_ball,
+        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_flee_from_ball, SEQ_ball_loc_move,
+                                                       SEQ_throw_ball,
                                                        SEQ_wander)
         root = SEL_flee_or_throw = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
 
@@ -449,6 +445,5 @@ class Miyuki:
         root = SEL_hit_or_out = Selector('catch or out or hit', SEQ_catch, SEQ_out, SEQ_hit_ball)
 
         root = SEL_hit_or_move = Selector('hit or move', SEL_hit_or_out, SEL_flee_or_throw)
-
 
         self.bt = BehaviorTree(root)

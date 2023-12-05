@@ -90,6 +90,7 @@ class Keiko_AI:
     catch_sound = None
     throw_sound = None
     hit_sound = None
+
     def load_image(self):
         if Keiko_AI.image == None:
             Keiko_AI.image = load_image('resource/keiko.png')
@@ -101,7 +102,7 @@ class Keiko_AI:
             Keiko_AI.hit_sound.set_volume(70)
             Keiko_AI.catch_sound.set_volume(70)
 
-    def __init__(self, speed = 0, power = 0,catch_percentage= 0):
+    def __init__(self, speed=0, power=0, catch_percentage=0):
         self.x = random.randint(100, 300)
         self.y = random.randint(105, 330)
         self.load_image()
@@ -129,7 +130,7 @@ class Keiko_AI:
     def draw(self):
         if self.state == 'Walk':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - move_lr[int(self.frame)].h / 2,
-                                         move_lr[int(self.frame)].w, 15)
+                                        move_lr[int(self.frame)].w, 15)
             if math.cos(self.dir) > 0 or self.face_dir == 1:
                 self.image.clip_draw(move_lr[int(self.frame)].x, move_lr[int(self.frame)].y,
                                      move_lr[int(self.frame)].w,
@@ -145,39 +146,38 @@ class Keiko_AI:
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - throw_motion[0].h / 2,
                                         throw_motion[0].w, 15)
             self.image.clip_draw(throw_motion[0].x, throw_motion[0].y,
-                                           throw_motion[0].w,
-                                           throw_motion[0].h, self.x, self.y,
-                                           throw_motion[0].w,
-                                           throw_motion[0].h)
+                                 throw_motion[0].w,
+                                 throw_motion[0].h, self.x, self.y,
+                                 throw_motion[0].w,
+                                 throw_motion[0].h)
         elif self.state == 'Throw':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - throw_motion[int(self.frame)].h / 2,
                                         throw_motion[int(self.frame)].w, 15)
             self.image.clip_draw(throw_motion[int(self.frame)].x, throw_motion[int(self.frame)].y,
-                                           throw_motion[int(self.frame)].w,
-                                           throw_motion[int(self.frame)].h,  self.x, self.y,
-                                           throw_motion[int(self.frame)].w,
-                                           throw_motion[int(self.frame)].h)
+                                 throw_motion[int(self.frame)].w,
+                                 throw_motion[int(self.frame)].h, self.x, self.y,
+                                 throw_motion[int(self.frame)].w,
+                                 throw_motion[int(self.frame)].h)
         elif self.state == 'HitMotion' or self.state == 'Hit':
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - hit_motion[int(self.frame)].h / 2,
-                                         hit_motion[int(self.frame)].w, 15)
+                                        hit_motion[int(self.frame)].w, 15)
             self.image.clip_draw(hit_motion[int(self.frame)].x, hit_motion[int(self.frame)].y,
-                                  hit_motion[int(self.frame)].w,
-                                  hit_motion[int(self.frame)].h, self.x, self.y,
-                                  hit_motion[int(self.frame)].w,
-                                  hit_motion[int(self.frame)].h )
+                                 hit_motion[int(self.frame)].w,
+                                 hit_motion[int(self.frame)].h, self.x, self.y,
+                                 hit_motion[int(self.frame)].w,
+                                 hit_motion[int(self.frame)].h)
         elif self.state == 'OutCount' or self.state == 'Out':
-            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 10, 91 , 15)
-            self.image.clip_draw(650, 334, 91, 35, self.x, self.y, 91 , 35 )
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - 10, 91, 15)
+            self.image.clip_draw(650, 334, 91, 35, self.x, self.y, 91, 35)
         elif self.state == 'CatchMotion' or self.state == 'Catch':
             pass
             self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.y - catch_motion[int(self.frame)].h / 2,
                                         catch_motion[int(self.frame)].w, 15)
             self.image.clip_draw(catch_motion[int(self.frame)].x, catch_motion[int(self.frame)].y,
-                                           catch_motion[int(self.frame)].w,
-                                           catch_motion[int(self.frame)].h, self.x, self.y,
-                                           catch_motion[int(self.frame)].w,
-                                           catch_motion[int(self.frame)].h)
-
+                                 catch_motion[int(self.frame)].w,
+                                 catch_motion[int(self.frame)].h, self.x, self.y,
+                                 catch_motion[int(self.frame)].w,
+                                 catch_motion[int(self.frame)].h)
 
     def handle_event(self, event):
         pass
@@ -208,12 +208,10 @@ class Keiko_AI:
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
 
-
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
-
 
     def move_to(self, r=0.5):
         self.state = 'Walk'
@@ -269,7 +267,7 @@ class Keiko_AI:
     def throw_ball(self):
         if self.state != 'Throw':
             self.throw_sound.play()
-            tx, ty = 450,200
+            tx, ty = 450, 200
             for layer in game_world.objects:
                 for o in layer:
                     if isinstance(o, miyuki.Miyuki):
@@ -372,11 +370,10 @@ class Keiko_AI:
             self.opp_not_hold()
             return BehaviorTree.SUCCESS
 
-
     def opp_not_hold(self):
         for layer in game_world.objects:
             for o in layer:
-                if isinstance(o,miyuki.Miyuki):
+                if isinstance(o, miyuki.Miyuki):
                     o.hold_ball = False
 
     def build_behavior_tree(self):
@@ -392,8 +389,6 @@ class Keiko_AI:
         c2 = Condition('코트 공이 있는지', self.is_court_in_ball)
         a4 = Action('공 위치로 설정', self.set_ball_location)
 
-
-
         root = SEQ_ball_loc_move = Sequence('move to ball', c2, a4, a2)
 
         c6 = Condition('상대가 공을 던졌는지', self.is_miyuki_throw_ball)
@@ -407,7 +402,8 @@ class Keiko_AI:
 
         root = SEQ_throw_ball = Sequence('공 던지기', c3, a5, a6)
 
-        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_flee_from_ball,SEQ_ball_loc_move, SEQ_throw_ball,
+        SEL_move_to_ball_or_throw_or_wander = Selector('공으로 이동 or 던지기 or 배회', SEQ_flee_from_ball, SEQ_ball_loc_move,
+                                                       SEQ_throw_ball,
                                                        SEQ_wander)
         root = SEL_flee_or_throw = Selector('도망 혹은 공 찾아서 던지기', SEQ_flee, SEL_move_to_ball_or_throw_or_wander)
 
@@ -426,6 +422,5 @@ class Keiko_AI:
         root = SEL_hit_or_out = Selector('catch or out or hit', SEQ_catch, SEQ_out, SEQ_hit_ball)
 
         root = SEL_hit_or_move = Selector('hit or move', SEL_hit_or_out, SEL_flee_or_throw)
-
 
         self.bt = BehaviorTree(root)

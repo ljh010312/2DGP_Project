@@ -23,7 +23,6 @@ def finish():
 
 
 def handle_events():
-
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -45,7 +44,6 @@ def draw():
     font.draw(10, 100, 'Press Space to Start', (0, 0, 0))
 
     update_canvas()
-
 
 
 def resume():

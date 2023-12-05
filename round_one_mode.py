@@ -57,13 +57,12 @@ def init():
     game_world.add_object(keiko, 2)
     game_world.add_collision_pair('keiko:ball', keiko, None)
 
-
     server.ball = Ball(490, 300, 40, 480, 300, 0)
     game_world.add_object(server.ball, 1)
     game_world.add_collision_pair('keiko:ball', None, server.ball)
     game_world.add_collision_pair('miyuki:ball', None, server.ball)
 
-    power_up_item = Power_Up_Item(100, 30 )
+    power_up_item = Power_Up_Item(100, 30)
     game_world.add_object(power_up_item, 1)
 
     shrink_potion = Shrink_Potion(150, 30)
@@ -71,8 +70,6 @@ def init():
 
     big_ball_potion = Big_Ball_Potion(200, 30)
     game_world.add_object(big_ball_potion, 1)
-
-
 
     with open('resource/round_one_data.toml', 'rb') as f:
         miyuki_data_list = tomllib.load(f)['miyuki']
@@ -82,8 +79,6 @@ def init():
             miyuki.__dict__.update(m)
             game_world.add_object(miyuki, 2)
             game_world.add_collision_pair('miyuki:ball', miyuki, None)
-
-
 
     keiko_ai = [Keiko_AI(status_mode.state[0], status_mode.state[1], status_mode.state[2]) for _ in range(2)]
     for k in keiko_ai:
@@ -102,6 +97,7 @@ def draw():
     game_world.render()
     update_canvas()
 
+
 def finish():
     bgm.stop()
     server.ball = None
@@ -114,6 +110,7 @@ def resume():
 
 def pause():
     pass
+
 
 def win_or_lose():
     keiko_count = 0
@@ -131,6 +128,7 @@ def win_or_lose():
         server.count += 1
         game_framework.change_mode(win_mode)
 
+
 def keiko_out():
     global keiko
     keiko_live = False
@@ -147,7 +145,8 @@ def keiko_out():
 
     if not keiko_live:
         if keiko_ai_live:
-            keiko = Keiko(x= temp.x, y= temp.y, speed=status_mode.state[0], power=status_mode.state[1],  catch_percentage= status_mode.state[2])
+            keiko = Keiko(x=temp.x, y=temp.y, speed=status_mode.state[0], power=status_mode.state[1],
+                          catch_percentage=status_mode.state[2])
             game_world.add_object(keiko, 2)
             game_world.add_collision_pair('keiko:ball', keiko, None)
             game_world.remove_object(temp)

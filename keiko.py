@@ -14,7 +14,6 @@ from shrink_potion import Shrink_Potion
 from big_ball_potion import Big_Ball_Potion
 
 
-
 class Frame:
     def __init__(self, x, y, w, h):
         self.x = x
@@ -67,7 +66,6 @@ hit_motion = (
     Frame(544, 331, 87, 36)
 )
 
-
 catch_motion = (
     Frame(15, 1814, 36, 73),
     Frame(15, 1814, 36, 73),
@@ -79,13 +77,11 @@ catch_motion = (
     Frame(127, 1814, 41, 69),
 )
 
-
 PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -95,17 +91,22 @@ FRAMES_PER_ACTION = 8
 def time_out(e):
     return e[0] == 'TIME_OUT'
 
+
 def hit_by_the_ball(e):
     return e[0] == 'HIT'
+
 
 def out(e):
     return e[0] == 'OUT'
 
+
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
 
+
 def space_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
+
 
 def right_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_d
@@ -157,7 +158,6 @@ class Out:
         if get_time() - keiko.wait_time > 1:
             game_world.remove_object(keiko)
 
-
     @staticmethod
     def draw(keiko):
         keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - 10, 91 / keiko.shrink, 15)
@@ -183,7 +183,9 @@ class Hit_motion:
 
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - hit_motion[int(keiko.frame)].h / (2 * keiko.shrink), hit_motion[int(keiko.frame)].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - hit_motion[int(keiko.frame)].h / (2 * keiko.shrink),
+                                     hit_motion[int(keiko.frame)].w / keiko.shrink, 15)
         keiko.image.clip_draw(hit_motion[int(keiko.frame)].x, hit_motion[int(keiko.frame)].y,
                               hit_motion[int(keiko.frame)].w,
                               hit_motion[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -198,9 +200,11 @@ class Catch:
         keiko.face_dir = 1
         keiko.wait_time = get_time()
         keiko.catch = True
+
     @staticmethod
     def exit(keiko, e):
         keiko.catch = False
+
     @staticmethod
     def do(keiko):
         keiko.frame = (keiko.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
@@ -209,7 +213,8 @@ class Catch:
 
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - catch_motion[int(keiko.frame)].h / (2 * keiko.shrink),
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - catch_motion[int(keiko.frame)].h / (2 * keiko.shrink),
                                      catch_motion[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(catch_motion[int(keiko.frame)].x, catch_motion[int(keiko.frame)].y,
@@ -223,7 +228,6 @@ class Catch:
                                             catch_motion[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y,
                                             catch_motion[int(keiko.frame)].w / keiko.shrink,
                                             catch_motion[int(keiko.frame)].h / keiko.shrink)
-
 
 
 class Charging:
@@ -245,7 +249,8 @@ class Charging:
 
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - throw_motion[0].h / (2 * keiko.shrink), throw_motion[0].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - throw_motion[0].h / (2 * keiko.shrink),
+                                     throw_motion[0].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(throw_motion[0].x, throw_motion[0].y,
                                   throw_motion[0].w,
@@ -253,10 +258,10 @@ class Charging:
                                   throw_motion[0].h / keiko.shrink)
         else:
             keiko.image.clip_composite_draw(throw_motion[0].x, throw_motion[0].y,
-                                  throw_motion[0].w,
-                                  throw_motion[0].h, 0, 'h',  keiko.x, keiko.y, throw_motion[0].w / keiko.shrink,
-                                  throw_motion[0].h / keiko.shrink)
-
+                                            throw_motion[0].w,
+                                            throw_motion[0].h, 0, 'h', keiko.x, keiko.y,
+                                            throw_motion[0].w / keiko.shrink,
+                                            throw_motion[0].h / keiko.shrink)
 
 
 class Throw_Ball:
@@ -269,7 +274,8 @@ class Throw_Ball:
         keiko.face_dir = 1 if keiko.x - e[1].x < 0 else -1
         if keiko.item == 'ball':
             server.ball.__dict__.update({"x": keiko.x - 20, "y": keiko.y + 25, "z": 40, "z_speed": 0,
-                                         "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,"bound_count": 0,
+                                         "target_x": e[1].x, "target_y": 800 - 1 - e[1].y, "is_bound": False,
+                                         "bound_count": 0,
                                          "power": keiko.power, "state": 'KeikoThrow'})
             server.ball.direction = math.atan2(server.ball.target_y - server.ball.y,
                                                server.ball.target_x - server.ball.x)
@@ -294,7 +300,9 @@ class Throw_Ball:
 
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - throw_motion[int(keiko.frame)].h / (2 * keiko.shrink), throw_motion[int(keiko.frame)].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - throw_motion[int(keiko.frame)].h / (2 * keiko.shrink),
+                                     throw_motion[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(throw_motion[int(keiko.frame)].x, throw_motion[int(keiko.frame)].y,
                                   throw_motion[int(keiko.frame)].w,
@@ -303,10 +311,10 @@ class Throw_Ball:
                                   throw_motion[int(keiko.frame)].h / keiko.shrink)
         else:
             keiko.image.clip_composite_draw(throw_motion[int(keiko.frame)].x, throw_motion[int(keiko.frame)].y,
-                                  throw_motion[int(keiko.frame)].w,
-                                  throw_motion[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y,
-                                  throw_motion[int(keiko.frame)].w / keiko.shrink,
-                                  throw_motion[int(keiko.frame)].h / keiko.shrink)
+                                            throw_motion[int(keiko.frame)].w,
+                                            throw_motion[int(keiko.frame)].h, 0, 'h', keiko.x, keiko.y,
+                                            throw_motion[int(keiko.frame)].w / keiko.shrink,
+                                            throw_motion[int(keiko.frame)].h / keiko.shrink)
 
 
 class Up_Down:
@@ -329,7 +337,9 @@ class Up_Down:
 
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - move_lr[int(keiko.frame)].h / (2 * keiko.shrink), move_lr[int(keiko.frame)].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - move_lr[int(keiko.frame)].h / (2 * keiko.shrink),
+                                     move_lr[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir > 0:
             keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -362,10 +372,11 @@ class Run:
 
         keiko.x += keiko.h_dir * keiko.speed * game_framework.frame_time
 
-
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - move_lr[int(keiko.frame)].h / (2 * keiko.shrink), move_lr[int(keiko.frame)].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - move_lr[int(keiko.frame)].h / (2 * keiko.shrink),
+                                     move_lr[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.h_dir > 0:
             keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -405,11 +416,11 @@ class Dia_Run:
         keiko.x += keiko.h_dir * keiko.speed * game_framework.frame_time
         keiko.y += keiko.v_dir * keiko.speed * game_framework.frame_time
 
-
-
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - move_lr[int(keiko.frame)].h / (2 * keiko.shrink), move_lr[int(keiko.frame)].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - move_lr[int(keiko.frame)].h / (2 * keiko.shrink),
+                                     move_lr[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.h_dir > 0:
             keiko.image.clip_draw(move_lr[int(keiko.frame)].x, move_lr[int(keiko.frame)].y, move_lr[int(keiko.frame)].w,
                                   move_lr[int(keiko.frame)].h, keiko.x, keiko.y,
@@ -439,7 +450,9 @@ class Idle:
 
     @staticmethod
     def draw(keiko):
-        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x, keiko.y - idle_state[int(keiko.frame)].h / (2 * keiko.shrink), idle_state[int(keiko.frame)].w / keiko.shrink, 15)
+        keiko.shadow_image.clip_draw(90, 157, 844, 144, keiko.x,
+                                     keiko.y - idle_state[int(keiko.frame)].h / (2 * keiko.shrink),
+                                     idle_state[int(keiko.frame)].w / keiko.shrink, 15)
         if keiko.face_dir == 1:
             keiko.image.clip_draw(idle_state[int(keiko.frame)].x, idle_state[int(keiko.frame)].y,
                                   idle_state[int(keiko.frame)].w,
@@ -460,7 +473,8 @@ class StateMachine:
         self.cur_state = Idle
         self.table = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down, down_down: Up_Down,
-                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging, hit_by_the_ball: Hit_motion, space_down: Catch},
+                   up_up: Up_Down, down_up: Up_Down, left_mouse_down: Charging, hit_by_the_ball: Hit_motion,
+                   space_down: Catch},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, up_down: Dia_Run,
                   down_down: Dia_Run, up_up: Dia_Run, down_up: Dia_Run, hit_by_the_ball: Hit_motion},
             Up_Down: {up_down: Idle, down_down: Idle, up_up: Idle, down_up: Idle, right_down: Dia_Run,
@@ -476,8 +490,8 @@ class StateMachine:
             Hit_motion: {out: Out},
             Out: {},
             Catch: {time_out: Idle, right_down: Run, left_down: Run, left_up: Run, right_up: Run, up_down: Up_Down,
-                         down_down: Up_Down,
-                         up_up: Up_Down, down_up: Up_Down, hit_by_the_ball:Hit_motion}
+                    down_down: Up_Down,
+                    up_up: Up_Down, down_up: Up_Down, hit_by_the_ball: Hit_motion}
         }
 
     def start(self):
@@ -508,10 +522,8 @@ def is_have(ob):
     return False
 
 
-
-
 class Keiko:
-    def __init__(self, x = 100, y = 100, speed = 0, power = 0, catch_percentage = 0):
+    def __init__(self, x=100, y=100, speed=0, power=0, catch_percentage=0):
         self.x, self.y = x, y
         self.frame = 0
         self.h_dir = 0
@@ -549,7 +561,7 @@ class Keiko:
                 self.shrink = 1
                 self.speed = self.temp_speed
         if self.charging:
-            server.ball.x = self.x - self.face_dir *  20
+            server.ball.x = self.x - self.face_dir * 20
             server.ball.y = self.y + 25
         elif self.hold_ball:
             server.ball.x = self.x + self.face_dir * 15
@@ -587,7 +599,6 @@ class Keiko:
     def get_bb(self):
         return self.x - 15 / self.shrink, self.y - 40 / self.shrink, self.x + 15 / self.shrink, self.y + 40 / self.shrink
 
-
     def handle_collision(self, group, other):
         if group == 'keiko:ball':
             if not self.hold_ball and other.is_bound and not other.state == 'Hold':
@@ -597,7 +608,7 @@ class Keiko:
                 other.bound_count = 4
                 self.hold_ball = True
             if other.state == 'Throw' and not other.is_bound:
-                #여기에 맞았을 때 추가
+                # 여기에 맞았을 때 추가
                 if self.catch:
                     if random.randint(1, 100) < self.catch_percentage:
                         self.catch_sound.play()
@@ -615,4 +626,3 @@ class Keiko:
                     self.hit_sound.play()
                     self.state_machine.handle_event(('HIT', 0))
                     other.direction += math.pi
-

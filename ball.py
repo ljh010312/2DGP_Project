@@ -18,6 +18,7 @@ class Ball:
     image = None
     shadow_image = None
     bound_sound = None
+
     def __init__(self, x=400, y=300, z=40, target_x=400, target_y=300, power=0):
         if Ball.image == None:
             Ball.image = load_image('resource/ball.png')
@@ -36,18 +37,20 @@ class Ball:
         self.is_bound = False
         self.scale = 1
         self.scale_time = 0
+
     def draw(self):
         if not self.state == 'Hold':
-            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y - 10 * (self.scale - 1), 25 * self.shadow_scale * self.scale,
+            self.shadow_image.clip_draw(90, 157, 844, 144, self.x, self.shadow_y - 10 * (self.scale - 1),
+                                        25 * self.shadow_scale * self.scale,
                                         15 * self.shadow_scale)
         self.image.clip_draw(3, 51, 26, 26, self.x, self.y, 20 * self.scale, 20 * self.scale)
-
 
     def update(self):
 
         self.x += self.power * math.cos(self.direction) * game_framework.frame_time
         self.z += self.z_speed * game_framework.frame_time
-        self.y += self.power * math.sin(self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
+        self.y += self.power * math.sin(
+            self.direction) * game_framework.frame_time + self.z_speed * game_framework.frame_time
         self.shadow_y = self.y - self.z - 10
         self.z_speed += GRAVITY_SPEED_PPS * game_framework.frame_time
         self.shadow_scale = 1 - (self.z / 50)
@@ -69,11 +72,8 @@ class Ball:
             self.direction += math.pi / 2
             self.is_bound = True
         if self.y > 435:
-            self.direction += math.pi /2
+            self.direction += math.pi / 2
             self.is_bound = True
-
-
-
 
     def bound(self):
         bound_decay = 0.5
@@ -83,13 +83,16 @@ class Ball:
         self.bound_count += 1
         self.is_bound = True
         self.z = 0.0
-        self.z_speed = abs(self.z_speed) * bound_decay
+        self.z_speed = -self.z_speed * bound_decay
+        if abs(self.z_speed) < set_stop:
+            self.z_speed = 0.0
         self.power = self.power * bound_decay
-        if abs(self.z_speed) < set_stop: self.z_speed = 0.0
-        if self.power < 10: self.power = 0.0
+        if self.power < 10:
+            self.power = 0.0
 
     def get_bb(self):
-        return self.x - (10 * self.scale), self.y - (10 * self.scale), self.x + (10 * self.scale), self.y + (10 * self.scale)
+        return self.x - (10 * self.scale), self.y - (10 * self.scale), self.x + (10 * self.scale), self.y + (
+                    10 * self.scale)
 
     def handle_collision(self, group, other):
         if group == 'keiko:ball':

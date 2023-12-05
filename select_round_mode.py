@@ -8,7 +8,9 @@ import round_two_mode
 import status_mode
 
 difficulty = ['EASY', 'NORMAL', 'HARD']
-difficulty_rgb = [(255,255,255), (0, 255, 0), (255, 0, 0)]
+difficulty_rgb = [(255, 255, 255), (0, 255, 0), (255, 0, 0)]
+
+
 def init():
     global background
     global font
@@ -23,6 +25,7 @@ def init():
     kn = load_image('resource/Court_Kenya.png')
     map = [jp, id, kn]
     font = load_font('resource/neodgm.ttf', 50)
+
 
 def finish():
     bgm.stop()
@@ -50,14 +53,13 @@ def handle_events():
                         game_framework.change_mode(round_three_mode)
 
 
-
 def update():
     pass
 
 
 def draw():
     clear_canvas()
-    background.clip_draw(0,0, 431, 183, 512, 400, 1024, 800)
+    background.clip_draw(0, 0, 431, 183, 512, 400, 1024, 800)
     for i in range(3):
         font.draw(250 * (i + 1) - 20, 360, f'{i + 1}', difficulty_rgb[i])
         map[i].clip_draw(0, 0, 431, 184, 250 * (i + 1), 250, 200, 160)
@@ -67,9 +69,7 @@ def draw():
     font.draw(30, 80, 'wasd: 이동     /   마우스: 공 던지기', (255, 255, 255))
     font.draw(30, 30, '1,2,3: 아이템   /   r: 팀원으로 부활', (255, 255, 255))
 
-
     update_canvas()
-
 
 
 def resume():

@@ -1,12 +1,13 @@
 from pico2d import *
 
+
 class Power_Up_Item:
     image = None
 
-    def __init__(self, x = 400, y = 300):
+    def __init__(self, x=400, y=300):
         if Power_Up_Item.image == None:
             Power_Up_Item.image = load_image('resource/item.png')
-        self.x, self.y= x, y
+        self.x, self.y = x, y
 
     def draw(self):
         self.image.clip_draw(19, 399, 63, 82, self.x, self.y, 40, 50)
