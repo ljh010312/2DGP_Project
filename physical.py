@@ -1,4 +1,4 @@
-PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
+PIXEL_PER_METER = (10.0 / 0.25)  # 10 pixel 25 cm
 
 RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)

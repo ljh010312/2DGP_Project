@@ -9,7 +9,7 @@ import physical
 import server
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 
-PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 40 cm
+PIXEL_PER_METER = physical.PIXEL_PER_METER
 RUN_SPEED_KMPH = 10.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)

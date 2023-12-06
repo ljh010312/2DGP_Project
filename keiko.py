@@ -77,8 +77,8 @@ catch_motion = (
     Frame(127, 1814, 41, 69),
 )
 
-PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
-RUN_SPEED_KMPH = 20.0  # Km / Hour
+PIXEL_PER_METER = physical.PIXEL_PER_METER
+RUN_SPEED_KMPH = 13.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -544,7 +544,7 @@ class Keiko:
         self.charging = False
         self.catch = False
         self.catch_percentage = 50 + catch_percentage
-        self.max_power = 80 + power
+        self.max_power = 70 + power
         self.speed = RUN_SPEED_PPS + physical.kmph_to_pps(speed)
         self.power = 0
         self.shrink = 1
@@ -581,7 +581,7 @@ class Keiko:
             if is_have(Shrink_Potion):
                 self.shrink = 2
                 self.temp_speed = self.speed
-                self.speed = physical.kmph_to_pps(35)
+                self.speed = physical.kmph_to_pps(25)
                 self.shrink_start_time = get_time()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
             if is_have(Big_Ball_Potion):

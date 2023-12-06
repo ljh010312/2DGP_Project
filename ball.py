@@ -1,8 +1,9 @@
 from pico2d import *
 import game_world
 import game_framework
+import physical
 
-PIXEL_PER_METER = (10.0 / 0.4)  # 10 pixel 25 cm
+PIXEL_PER_METER = physical.PIXEL_PER_METER
 GRAVITY_SPEED_KMPH = -10.0  # Km / Hour
 GRAVITY_SPEED_MPM = (GRAVITY_SPEED_KMPH * 1000.0 / 60.0)
 GRAVITY_SPEED_MPS = (GRAVITY_SPEED_MPM / 60.0)
