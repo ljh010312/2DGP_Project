@@ -1,5 +1,5 @@
 # 메인 파일 이름을 지정하세요.
-main_file = 'main.py'
+main_file = 'main_2020180029.py'
 
 # 데이타 파일들을 지정하세요.
 data_files = [
